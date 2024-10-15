@@ -1,0 +1,56 @@
+-- >> Services
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+
+-- >> Values
+local Handshake = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("CharacterSoundEvent")
+local LastCheck = nil
+local LocalPlayer = Players.LocalPlayer
+local Hooks = {}
+local HandshakeInts = {}
+
+-- >> Bypass
+Hooks.__namecall = hookmetamethod(game, "__namecall", function(self, ...)
+    local Method = getnamecallmethod()
+    local Args = {...}
+
+    if not checkcaller() and (self == Handshake) and (Method == "fireServer") and (string.find(Args[1], "AC")) then
+        if (#HandshakeInts == 0) then
+            HandshakeInts = {table.unpack(Args[2], 2, 18)}
+        else
+            for i, v in HandshakeInts do
+                Args[2][i + 1] = v
+            end
+        end
+    end
+
+    return Hooks.__namecall(self, ...)
+end)
+
+for Index, Function in next, getgc(true) do
+    if typeof(Function) == "function" then
+        local Script = debug.info(Function, "s")
+        if Script and string.find(Script, "PlayerModule.LocalScript") then
+            local Upvalues = debug.getupvalues(Function)
+            for I, Upvalue in next, Upvalues do
+                if type(Upvalue) == "number" and Upvalue > 4000000 then
+                    hookfunction(Function, function()
+                        return wait(9e9)
+                    end)
+                end
+            end
+        end
+    end
+end
+
+task.spawn(function()
+    while task.wait(0.4) do
+        if LastCheck and (tick() - LastCheck) >= 20 then
+            LocalPlayer:Kick("[YON-HUB]: Bypass timed out. Bypass initialization aborted.")
+            task.wait(3)
+            game:Shutdown()
+        end
+    end
+end)
+
+print("[YON-HUB]: Bypass has been loaded.")

@@ -1,0 +1,303 @@
+setfpscap(60)
+
+local liquidbounce = loadstring(game:HttpGet("https://gist.githubusercontent.com/Forexium/af363593794cb64aa902d4f7bd1cb396/raw/d792a693e5b17aac1a9d6d78fa2e0c6b40422194/skibiditoilet.lua", true))()
+local ui = liquidbounce.new()
+
+loadstring([[
+    function LPH_NO_VIRTUALIZE(f) return f end;
+]])();
+
+local IS_PRACTICE = game.PlaceId == 8206123457
+local AC_BYPASS = IS_PRACTICE
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+LPH_NO_VIRTUALIZE(function()
+    if hookmetamethod and not string.match(getexecutorname(), "Solara") then
+        local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+        local Handshake = ReplicatedStorage.Remotes.CharacterSoundEvent
+        local Hooks = {}
+        local HandshakeInts = {}
+        
+        Hooks.__namecall = hookmetamethod(game, "__namecall", function(self, ...)
+            local Method = getnamecallmethod()
+            local Args = {...}
+
+            if not checkcaller() and (self == Handshake) and (Method == "fireServer") and (string.find(Args[1], "AC")) then
+                if (#HandshakeInts == 0) then
+                    HandshakeInts = {table.unpack(Args[2], 2, 18)}
+                else
+                    for i, v in HandshakeInts do
+                        Args[2][i + 1] = v
+                    end
+                end
+            end
+
+            return Hooks.__namecall(self, ...)
+        end)
+
+        task.wait()
+
+        for i, v in getgc() do
+            if typeof(v) == "function" and islclosure(v) then
+                if (#getprotos(v) == 1) and table.find(getconstants(getproto(v, 1)), 4000001) then
+                    hookfunction(v, function() end)
+                end
+            end
+        end
+        
+        AC_BYPASS = true
+    end
+end)()
+
+for Index, Value in workspace:GetDescendants() do
+    if Value:IsA("Seat") then
+        Value.Disabled = true
+    end
+end
+
+local Table = {
+    Magnets = {
+        Enabled = false,
+        Radius = 0,
+        ShowHitbox = false,
+    },
+    AngleEnhancer = {
+        Enabled = false,
+        Indicator = false,
+        JP = 50,
+    },
+    JumpPower = {
+        Enabled = false,
+        JP = 50,
+    },
+    AutoBoost = {
+        Enabled = false,
+        Power = 0,
+    },
+    AutoKick = {
+        Enabled = false,
+        Power = 0,
+        Accuracy = 0,
+        Random = false,
+    }
+}
+
+local cat1 = ui:CreateCategory("Magnets", "http://www.roblox.com/asset/?id=101901814104653")
+local cat2 = ui:CreateCategory("Miscellanous", "http://www.roblox.com/asset/?id=126577283745120")
+local cat3 = ui:CreateCategory("Player", "http://www.roblox.com/asset/?id=101901814104653")
+
+-- >> Magnets
+local Magnets = ui:CreateModule(cat1, "Magnets", function(Value)
+    Table.Magnets.Enabled = Value
+end)
+
+ui:CreateToggle(Magnets, "Hitbox", function(Value)
+    Table.Magnets.ShowHitbox = Value
+end)
+
+ui:CreateSlider(Magnets, "Radius", 0, 50, 0, function(Value)
+    Table.Magnets.Radius = Value
+end)
+
+-- >> Miscellanous
+local autoBoost = ui:CreateModule(cat2, "AutoBoost", function(Value)
+    Table.AutoBoost.Enabled = Value
+end)
+
+ui:CreateSlider(autoBoost, "Boost", 0, 15, 0, function(Value)
+    Table.AutoBoost.Power = Value
+end)
+
+local autoKick = ui:CreateModule(cat2, "AutoKick", function(Value)
+    Table.AutoKick.Enabled = Value
+end)
+
+ui:CreateSlider(autoKick, "Power", 0, 100, 0, function(Value)
+    Table.AutoKick.Power = Value
+end)
+
+ui:CreateSlider(autoKick, "Accuracy", 0, 100, 0, function(Value)
+    Table.AutoKick.Accuracy = Value
+end)
+
+ui:CreateToggle(autoKick, "Random", function(Value)
+    Table.AutoKick.Random = Value
+end)
+
+-- >> Player
+local angleEnhancer = ui:CreateModule(cat3, "Angle Enhancer", function(Value)
+    Table.AngleEnhancer.Enabled = Value
+end)
+
+ui:CreateToggle(angleEnhancer, "Indicator", function(Value)
+    Table.AngleEnhancer.Indicator = Value
+end)
+
+ui:CreateSlider(angleEnhancer, "JP", 50, 70, 50, function(Value)
+    Table.AngleEnhancer.JP = Value
+end)
+
+local jumpPower = ui:CreateModule(cat3, "Jump Power", function(Value)
+    Table.JumpPower.Enabled = Value
+end)
+
+ui:CreateSlider(jumpPower, "JP", 50, 70, 50, function(Value)
+    Table.JumpPower.JP = Value
+end)
+
+local function onCharacterAutomatics(character)
+	local leftLeg = character:WaitForChild("Left Leg")
+	local rightLeg = character:WaitForChild("Right Leg")
+	
+	local humanoid = character:WaitForChild("Humanoid")
+	
+	local function onTouch(hit)
+		if not hit.Name:match("Arm") and not hit.Name:match("Head") then return end
+		if hit:IsDescendantOf(character) then return end
+		
+		if humanoid.FloorMaterial ~= Enum.Material.Air then return end
+		
+		character.HumanoidRootPart.AssemblyLinearVelocity += Vector3.new(0, Table.AutoBoost.Power, 0)
+	end
+	
+	leftLeg.Touched:Connect(onTouch)
+	rightLeg.Touched:Connect(onTouch)
+end
+
+onCharacterAutomatics(LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait())
+
+LPH_NO_VIRTUALIZE(function()
+    task.spawn(function()
+        while task.wait() do
+            local CatchLeft = LocalPlayer.Character:WaitForChild("CatchLeft")
+            local CatchRight = LocalPlayer.Character:WaitForChild("CatchRight")
+            if not CatchLeft then continue end
+            if not CatchRight then continue end
+            CatchLeft.Transparency = Table.Magnets.ShowHitbox and 0.5 or 1
+            CatchRight.Transparency = Table.Magnets.ShowHitbox and 0.5 or 1
+        end
+    end)
+end)()
+
+LPH_NO_VIRTUALIZE(function()
+    task.spawn(function()
+        while task.wait() do
+            if LocalPlayer.Character and LocalPlayer.Character:WaitForChild("CatchLeft") and LocalPlayer.Character:WaitForChild("CatchRight") then
+                local CatchLeft = LocalPlayer.Character:WaitForChild("CatchLeft")
+                local CatchRight = LocalPlayer.Character:WaitForChild("CatchRight")
+                local Size = Vector3.new(Table.Magnets.Radius, Table.Magnets.Radius, Table.Magnets.Radius)
+                    
+                if CatchLeft.Size ~= Size then
+                    CatchLeft.Size = Size
+                end
+                if CatchRight.Size ~= Size then
+                    CatchRight.Size = Size
+                end
+            end
+        end
+    end)
+end)()
+
+LocalPlayer.PlayerGui.ChildAdded:Connect(function(child)
+	if child.Name == "KickerGui" and Table.AutoKick.Enabled then
+		local cursor = child:FindFirstChild("Cursor", true)
+		
+		if Table.AutoKick.Random then
+			Table.AutoKick.Power = Random.new():NextNumber(75, 100)
+			Table.AutoKick.Accuracy = Random.new():NextNumber(75, 100)
+		end
+		
+		repeat task.wait() until cursor.Position.Y.Scale < 0.01 + ((100 - Table.AutoKick.Power) * 0.012)
+		mouse1click()
+		repeat task.wait() until cursor.Position.Y.Scale > 0.9 - ((100 - Table.AutoKick.Accuracy) * 0.001)
+		mouse1click()
+	end
+end)
+
+local AC_BYPASS = false
+
+LPH_NO_VIRTUALIZE(function()
+    task.spawn(function()
+        local angleTick = tick()
+        local oldLookVector = Vector3.new(0, 0, 0)
+        
+        local shiftLockEnabled = false
+        local lastEnabled = false
+
+        local function hookCharacter(character)
+            local humanoid = character:WaitForChild("Humanoid")
+            local hrp = character:WaitForChild("HumanoidRootPart")
+
+            humanoid.Jumping:Connect(function()
+                if humanoid:GetState() ~= Enum.HumanoidStateType.Jumping then return end
+                if tick() - angleTick > 0.2 then return end
+                if not Table.AngleEnhancer.Enabled then return end
+
+                if Table.AngleEnhancer.Indicator then
+                    local h = Instance.new("Hint")
+                    h.Text = "Angled"
+                    h.Parent = workspace
+
+                    game:GetService("Debris"):AddItem(h, 1)
+                end
+                
+                if AC_BYPASS then return end
+
+                task.wait(0.05); hrp.AssemblyLinearVelocity += Vector3.new(0, Table.AngleEnhancer.JP - 50, 0)
+            end)
+        end
+
+        hookCharacter(LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait())
+
+        LocalPlayer.CharacterAdded:Connect(hookCharacter)
+        
+        game:GetService("UserInputService"):GetPropertyChangedSignal("MouseBehavior"):Connect(function()
+            if game:GetService("UserInputService").MouseBehavior == Enum.MouseBehavior.LockCenter then
+                shiftLockEnabled = true
+            else
+                shiftLockEnabled = false
+            end
+        end)
+
+        while true do
+            task.wait()
+            local character = LocalPlayer.Character; if not character then continue end
+            local hrp = character:FindFirstChild("HumanoidRootPart"); if not hrp then continue end
+            local humanoid = character:FindFirstChild("Humanoid"); if not humanoid then continue end
+
+            local lookVector = hrp.CFrame.LookVector
+            local difference = (oldLookVector - lookVector).Magnitude
+
+            if not shiftLockEnabled and lastEnabled then
+                angleTick = tick()
+            end
+            
+            if AC_BYPASS then
+                if (tick() - angleTick < 0.2) and Table.AngleEnhancer.Enabled then
+                    humanoid.JumpPower = (Table.JumpPower.Enabled and Table.JumpPower.JP or 50) + (Table.AngleEnhancer.JP - 50)
+                elseif not Table.AngleEnhancer.Enabled then
+                    humanoid.JumpPower = (Table.JumpPower.Enabled and Table.JumpPower.JP or 50)
+                end
+            end
+
+            oldLookVector = hrp.CFrame.LookVector
+            lastEnabled = shiftLockEnabled
+        end
+    end)
+end)()
+
+local function onCharacterMovement(character)
+    local humanoid = character:WaitForChild("Humanoid")
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+    humanoid.StateChanged:Connect(function(_, newState)
+        if newState == Enum.HumanoidStateType.Jumping and Table.JumpPower.Enabled then
+            task.wait(0.1)
+            humanoidRootPart.AssemblyLinearVelocity += Vector3.new(0, Table.JumpPower.JP - 50, 0)
+        end
+    end)
+end
+
+onCharacterMovement(LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait())

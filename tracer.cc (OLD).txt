@@ -1,0 +1,2613 @@
+local ErrorScript = game:GetService("ReplicatedFirst"):FindFirstChild("LocalScript")
+
+if ErrorScript then
+    ErrorScript:Destroy()
+end
+
+loadstring([[
+    function LPH_NO_VIRTUALIZE(f) return f end;
+]])();
+
+loadstring(game:HttpGet('https://raw.githubusercontent.com/Forexium/Yon/main/UILibary.lua'))()
+local Library = initLibrary()
+local Window = Library:Load({name = "Tracer.cc", sizeX = 425, sizeY = 512, color = Color3.fromRGB(203, 92, 255)})
+
+-- // Variables // 
+
+local debris = game:GetService("Debris")
+local players = game:GetService("Players")
+local statsService = game:GetService("Stats")
+local runService = game:GetService("RunService")
+local replicatedStorage = game:GetService("ReplicatedStorage")
+local userInputService = game:GetService("UserInputService")
+local scriptContext = game:GetService("ScriptContext")
+
+local player = players.LocalPlayer
+local mouse = player:GetMouse()
+local camera = workspace.CurrentCamera
+local values = replicatedStorage:FindFirstChild("Values")
+
+local IS_PRACTICE = game.PlaceId == 8206123457
+local IS_SOLARA = string.match(getexecutorname(), "Solara")
+local IS_ZORARA = string.match(getexecutorname(), "Zorara") or string.match(getexecutorname(), "Nova") or string.match(getexecutorname(), "Nova 1.0")
+local AC_BYPASS = IS_PRACTICE
+
+if not values or IS_PRACTICE then
+	if replicatedStorage:FindFirstChild("Values") then
+		replicatedStorage:FindFirstChild("Values"):Destroy()
+	end
+	values = Instance.new("Folder")
+	local status = Instance.new("StringValue")
+	status.Name = "Status"
+	status.Value = "InPlay"
+	status.Parent = values
+	values.Parent = replicatedStorage
+	values.Name = "Values"
+end
+
+local a0, a1 = Instance.new("Attachment"), Instance.new("Attachment")
+a0.Parent = workspace.Terrain; a1.Parent = workspace.Terrain
+
+local beam = Instance.new("Beam", workspace.Terrain)
+beam.Attachment0 = a0
+beam.Attachment1 = a1
+beam.Segments = 500
+beam.Width0 = 0.5
+beam.Width1 = 0.5
+beam.Transparency = NumberSequence.new(0)
+beam.Color = ColorSequence.new(Color3.fromHex("#7953FF"))
+
+local part = Instance.new("Part")
+part.Transparency = 0.5
+part.Anchored = true
+part.CanCollide = false
+part.CastShadow = false
+
+local ping = 0
+local fps = 0
+
+local isCatching = false
+
+LPH_NO_VIRTUALIZE(function()
+	if IS_SOLARA and not IS_PRACTICE then
+		local Players = game:GetService("Players")
+		local CoreGui = game:GetService("CoreGui")
+		local ScriptContext = game:GetService("ScriptContext")
+		local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+		local LocalPlayer = Players.LocalPlayer
+
+		local Remote = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("CharacterSoundEvent")
+
+		ScriptContext:SetTimeout(0)
+
+		local Stuff = {
+			[1] = {},
+			[2] = math.random(1000000, 100000000),
+			[3] = math.random(1000000, 100000000),
+			[4] = math.random(1000000, 100000000),
+			[5] = math.random(1000000, 100000000),
+			[6] = math.random(1000000, 100000000),
+			[7] = math.random(1000000, 100000000),
+			[8] = math.random(1000000, 100000000),
+			[9] = math.random(1000000, 100000000),
+			[10] = math.random(1000000, 100000000),
+			[11] = math.random(1000000, 100000000),
+			[12] = math.random(1000000, 100000000),
+			[13] = math.random(1000000, 100000000),
+			[14] = math.random(1000000, 100000000),
+			[15] = math.random(1000000, 100000000),
+			[16] = math.random(1000000, 100000000),
+			[17] = math.random(1000000, 100000000),
+			[18] = math.random(1000000, 100000000),
+			[19] = newproxy(true),
+		}
+
+		task.spawn(function()
+			while task.wait(0.35) do
+				Remote:fireServer("AC\240\159\146\171", Stuff, nil)
+				
+				local CharacterSoundEvent = Instance.new("RemoteEvent")
+				CharacterSoundEvent.Name = "CharacterSoundEvent"
+				CharacterSoundEvent.Parent = ReplicatedStorage:WaitForChild("Remotes")
+
+				print(CharacterSoundEvent)
+
+				Remote:Destroy()
+				print("Destroyed the humer.")
+
+				CharacterSoundEvent:fireServer("AC\240\159\146\171", Stuff, nil)
+				print("Sigmer.")
+			end
+		end)
+
+		Remote.OnClientEvent:Connect(function(...)
+			local Args = {...}
+
+			Args[1] = Stuff
+			Args[2] = Stuff
+			Args[3] = Stuff
+		end)
+
+		AC_BYPASS = true
+	end
+end)()
+
+LPH_NO_VIRTUALIZE(function()
+	if hookmetamethod and not IS_SOLARA and not IS_ZORARA then
+		local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+		local Handshake = ReplicatedStorage.Remotes.CharacterSoundEvent
+		local Hooks = {}
+		local HandshakeInts = {}
+		
+		Hooks.__namecall = hookmetamethod(game, "__namecall", function(self, ...)
+			local Method = getnamecallmethod()
+			local Args = {...}
+
+			if not checkcaller() and (self == Handshake) and (Method == "fireServer") and (string.find(Args[1], "AC")) then
+				if (#HandshakeInts == 0) then
+					HandshakeInts = {table.unpack(Args[2], 2, 18)}
+				else
+					for i, v in HandshakeInts do
+						Args[2][i + 1] = v
+					end
+				end
+			end
+
+			return Hooks.__namecall(self, ...)
+		end)
+
+		task.wait()
+
+		for i, v in getgc() do
+			if typeof(v) == "function" and islclosure(v) then
+				if (#getprotos(v) == 1) and table.find(getconstants(getproto(v, 1)), 4000001) then
+					hookfunction(v, function() end)
+				end
+			end
+		end
+		
+		AC_BYPASS = true
+	end
+end)()
+
+-- // Configurations //
+
+local Tracer = {
+    Magnets = {
+        Enabled = false,
+        Radius = 10,
+        Type = "Custom",
+        ShowHitbox = false,
+		Multiplier = 1,
+    },
+	PullVector = {
+		Enabled = false,
+		Radius = 0,
+		Type = "Teleport",
+		Power = 0,
+	},
+    Player = {
+        AngleEnhancer = false,
+        AngleEnhancerJP = 50,
+        AngleEnhancerIndicator = false,
+        JumpPower = false,
+        JumpPowerValue = 50,
+		AntiBlock = false,
+		NoJumpCooldown = false,
+		AntiJam = false,
+		AntiOOB = false,
+		NoFreeze = false,
+		WalkSpeed = false,
+		Speed = 0,
+		CFrameSpeed = false,
+		CFrameSpeedValue = 0,
+		TackleExtender = false,
+		TackleExtenderRadius = 0,
+		BlockExtender = false,
+		BlockExtenderRadius = 0,
+		BlockExtenderRadiusTransparency = 1,
+		Fly = false,
+    },
+	Miscellanous = {
+		QuickTP = false,
+		QuickTPBind = Enum.KeyCode.F,
+		QuickTPSpeed = 0,
+		ClickTackleAimbot = false,
+		ClickTackleAimbotRadius = 0,
+		VisualiseBallPath = false,
+		NoBallTrail = false,
+		OptimalJumpPredictions = false,
+		OptimalJumpType = "Jump"
+	},
+	Automatics = {
+		AutoBoost = false,
+		AutoBoostPower = 0,
+		AutoQB = false,
+		AutoQBType = "Legit",
+		AutoRush = false,
+		AutoRushDelay = 0,
+		AutoRushPredict = false,
+		AutoCaptain = false,
+		AutoKick = false,
+		AutoKickAccuracy = 100,
+		AutoKickPower = 100,
+		AutoCatch = false,
+		AutoCatchRadius = 0,
+		AutoSwat = false,
+		AutoSwatRadius = 0
+	}
+}
+
+local Settings = {
+	QBAimbot = false,
+	QBAimbotUI = false,
+	QBAimbotVisualise = false,
+	QBAimbotAutoThrowType = false,
+	QBAimbot95PowerOnly = false,
+	QBAimbotAutoAngle = false,
+	QBAimbotAntiOOB = false,
+	QBAimbotAdjustPowerGUI = false,
+	QBAimbotXOffset = 0,
+	QBAimbotYOffset = 0,
+	QBAimbotExperimental = false,
+	QBAimbotAntiOOBThreshold = 0,
+	QBAimbotDimeKeybind = Enum.KeyCode.E,
+	QBAimbotJumpKeybind = Enum.KeyCode.R,
+	QBAimbotDiveKeybind = Enum.KeyCode.T,
+	QBAimbotMagKeybind = Enum.KeyCode.Y,
+	QBAimbotBulletKeybind = Enum.KeyCode.U
+}
+
+local throwType = "Dive"
+
+local offsets = {
+    Dive = {
+        xLead = 3,
+        yLead = 4.5,
+        routes = {
+            ["go"] = {
+                xzOffset = 0,
+                yOffset = 0
+            },
+            ["post/corner"] = {
+                xzOffset = 0,
+                yOffset = 0
+            },
+            ["slant"] = {
+                xzOffset = 0,
+                yOffset = 0
+            },
+            ["in/out"] = {
+                xzOffset = -1,
+                yOffset = -2
+            },
+            ["flat"] = {
+                xzOffset = 0,
+                yOffset = -2
+            },
+            ["curl/comeback"] = {
+                xzOffset = 4,
+                yOffset = 0
+            },
+            ["stationary"] = {
+                xzOffset = 0,
+                yOffset = 0
+            }
+        }
+    },
+    Mag = {
+        xLead = 3,
+        yLead = 6,
+        routes = {
+            ["go"] = {
+                xzOffset = 0,
+                yOffset = 0
+            },
+            ["post/corner"] = {
+                xzOffset = 0,
+                yOffset = 0
+            },
+            ["slant"] = {
+                xzOffset = 0,
+                yOffset = 0
+            },
+            ["in/out"] = {
+                xzOffset = -1,
+                yOffset = -2
+            },
+            ["flat"] = {
+                xzOffset = 0,
+                yOffset = -2
+            },
+            ["curl/comeback"] = {
+                xzOffset = 6,
+                yOffset = 0
+            },
+            ["stationary"] = {
+                xzOffset = 0,
+                yOffset = 0
+            }
+        }
+    },
+    Jump = {
+        xLead = 2,
+        yLead = 3,
+        routes = {
+            ["go"] = {
+                xzOffset = 0,
+                yOffset = -1.5
+            },
+            ["post/corner"] = {
+                xzOffset = 0,
+                yOffset = 0
+            },
+            ["slant"] = {
+                xzOffset = 0,
+                yOffset = 0
+            },
+            ["in/out"] = {
+                xzOffset = -1,
+                yOffset = 3
+            },
+            ["flat"] = {
+                xzOffset = 0,
+                yOffset = 3
+            },
+            ["curl/comeback"] = {
+                xzOffset = 2,
+                yOffset = 4
+            },
+            ["stationary"] = {
+                xzOffset = 0,
+                yOffset = 7.5
+            }
+        }
+    },
+    Dime = {
+        xLead = 2,
+        routes = {
+            ["go"] = {
+                xzOffset = 0,
+                yOffset = 0
+            },
+            ["post/corner"] = {
+                xzOffset = 0,
+                yOffset = 0
+            },
+            ["slant"] = {
+                xzOffset = 0,
+                yOffset = 0
+            },
+            ["in/out"] = {
+                xzOffset = -1,
+                yOffset = -1
+            },
+            ["flat"] = {
+                xzOffset = 0,
+                yOffset = -1
+            },
+            ["curl/comeback"] = {
+                xzOffset = 2,
+                yOffset = 0
+            },
+            ["stationary"] = {
+                xzOffset = 0,
+                yOffset = 0
+            }
+        }
+    },
+}
+
+-- // Functions //
+
+local boundaries = {}
+local moveToUsing = {}
+
+if not IS_PRACTICE then
+	for index, part in pairs(workspace.Models.Boundaries:GetChildren()) do
+		boundaries[#boundaries + 1] = part
+	end
+end
+
+local childAddedEvent = nil
+
+local function toggleRenderingTextures(v)
+	if childAddedEvent then
+		childAddedEvent:Disconnect()
+		childAddedEvent = nil
+	end
+
+	if not v then
+		for index, part in pairs(workspace:GetDescendants()) do
+			if not part:IsA("BasePart") then continue end
+			part:SetAttribute("originalMaterial", part.Material.Name)
+			part.Material = Enum.Material.SmoothPlastic
+		end
+
+		childAddedEvent = workspace.DescendantAdded:Connect(function(part)
+			if not part:IsA("BasePart") then return end
+			part:SetAttribute("originalMaterial", part.Material.Name)
+			part.Material = Enum.Material.SmoothPlastic
+		end)
+	else
+		for index, part in pairs(workspace:GetDescendants()) do
+			if not part:IsA("BasePart") then continue end
+			if not part:GetAttribute("originalMaterial") then continue end
+			part.Material = Enum.Material[part:GetAttribute("originalMaterial")]
+		end
+	end
+end
+
+local function findTarget(opp)
+	local cc = workspace.CurrentCamera
+	local target = nil
+	local dist = math.huge
+
+	local targets = {}
+
+	for _, player in pairs(players:GetPlayers()) do
+		if not opp then
+			if players.LocalPlayer.Team and (players.LocalPlayer.Team ~= player.Team) then continue end
+		else
+			if players.LocalPlayer.Team and (players.LocalPlayer.Team == player.Team) then continue end
+		end
+		table.insert(targets, player.Character)
+	end
+
+	if IS_PRACTICE then
+		table.insert(targets, workspace.npcwr.a['bot 1'])
+		table.insert(targets, workspace.npcwr.a['bot 2'])
+		table.insert(targets, workspace.npcwr.b['bot 3'])
+		table.insert(targets, workspace.npcwr.b['bot 4'])
+	end
+
+	for _, v in pairs(targets) do
+		local screenpoint, onscreen = cc:WorldToViewportPoint(v.HumanoidRootPart.Position)
+		local check = (Vector2.new(userInputService:GetMouseLocation().X, userInputService:GetMouseLocation().Y) - Vector2.new(screenpoint.X, screenpoint.Y)).magnitude
+		if check < dist then
+			target = v
+			dist = check
+		end
+	end
+
+	return target
+end
+
+function getPing()
+	return statsService.PerformanceStats.Ping:GetValue()
+end
+
+function getServerPing()
+	return statsService.Network.ServerStatsItem['Data Ping']:GetValue()
+end
+
+function beamProjectile(g, v0, x0, t1)
+	local c = 0.5*0.5*0.5;
+	local p3 = 0.5*g*t1*t1 + v0*t1 + x0;
+	local p2 = p3 - (g*t1*t1 + v0*t1)/3;
+	local p1 = (c*g*t1*t1 + 0.5*v0*t1 + x0 - c*(x0+p3))/(3*c) - p2;
+
+	local curve0 = (p1 - x0).magnitude;
+	local curve1 = (p2 - p3).magnitude;
+
+	local b = (x0 - p3).unit;
+	local r1 = (p1 - x0).unit;
+	local u1 = r1:Cross(b).unit;
+	local r2 = (p2 - p3).unit;
+	local u2 = r2:Cross(b).unit;
+	b = u1:Cross(r1).unit;
+
+	local cf1 = CFrame.new(
+		x0.x, x0.y, x0.z,
+		r1.x, u1.x, b.x,
+		r1.y, u1.y, b.y,
+		r1.z, u1.z, b.z
+	)
+
+	local cf2 = CFrame.new(
+		p3.x, p3.y, p3.z,
+		r2.x, u2.x, b.x,
+		r2.y, u2.y, b.y,
+		r2.z, u2.z, b.z
+	)
+
+	return curve0, -curve1, cf1, cf2;
+end
+
+function findClosestBall()
+	local lowestDistance = math.huge
+	local nearestBall = nil
+
+	local character = player.Character
+
+	for index, ball in pairs(workspace:GetChildren()) do
+		if ball.Name ~= "Football" then continue end
+		if not ball:IsA("BasePart") then continue end
+		if not character:FindFirstChild("HumanoidRootPart") then continue end
+		local distance = (ball.Position - character.HumanoidRootPart.Position).Magnitude
+
+		if distance < lowestDistance then
+			nearestBall = ball
+			lowestDistance = distance
+		end
+	end
+
+	return nearestBall
+end
+
+function getNearestPartToPartFromParts(part, parts)
+	local lowestDistance = math.huge
+	local nearestPart = nil
+
+	for index, p in pairs(parts) do
+		local distance = (part.Position - p.Position).Magnitude
+
+		if distance < lowestDistance then
+			nearestPart = p
+			lowestDistance = distance
+		end
+	end
+
+	return nearestPart
+end
+
+local function findPossessor()
+	for index, player in pairs(players:GetPlayers()) do
+		local character = player.Character; if not character then continue end
+		if not character:FindFirstChildWhichIsA("Tool") then continue end
+		return player.Character
+	end
+end
+
+task.spawn(function()
+	while true do
+		task.wait(0.1)
+		ping = ( getPing() + getServerPing() ) / 1000
+	end
+end)
+
+task.spawn(function()
+	runService.RenderStepped:Connect(function()
+		fps += 1
+		task.delay(1, function()
+			fps -= 1
+		end)
+	end)
+end)
+
+local fakeBalls = {}
+local velocity = {}
+local pullVectoredBalls = {}
+
+local Catching = Window:Tab("Catching")
+local Physics = Window:Tab("Physics")
+local Miscellanous = Window:Tab("Miscellanous")
+local Automatics = Window:Tab("Automatics")
+local QB = Window:Tab("QB")
+local Visuals = Window:Tab("Visuals")
+local Configs = Window:Tab("Config")
+
+local Magnets = Catching:Section{name = "Magnets & Settings", column = 1}
+local PullVector = Catching:Section{name = "Pull Vector & Settings", column = 2}
+local JumpPower = Physics:Section{name = "Jump Power & Settings", column = 1}
+local AngleEnhancer = Physics:Section{name = "Angle Enhancer & Settings", column = 2}
+local PhysicsSettings = Physics:Section{name = "Physics Settings", column = 1}
+local WalkSpeed = Physics:Section{name = "Walk Speed & Settings", column = 2}
+local CFrameSpeed = Physics:Section{name = "Cframe Speed & Settings", column = 1}
+local Fly = Physics:Section{name = "Fly & Settings", column = 2}
+local MiscellanousSettings = Miscellanous:Section{name = "Miscellanous Settings", column = 1}
+local AutomaticPhysics = Automatics:Section{name = "Automatic Physics", column = 1}
+local AutomaticSettings = Automatics:Section{name = "Automatic Settings", column = 2}
+local Visuals = Visuals:Section{name = "Visuals", column = 1}
+local QBStuff = QB:Section{name = "QB", column = 1}
+local AntiOOB = QB:Section{name = "Anti OOB", column = 2}
+local XDistance = QB:Section{name = "X Lead", column = 1}
+local YDistance = QB:Section{name = "Y Lead", column = 2}
+local ConfigsStuff = Configs:Section{name = "Save & Load Config", column = 1}
+
+-- // Catching Tab //
+
+Magnets:Toggle{
+    Name = "Enable",
+    flag = "ooolol", 
+    callback = function(Value)
+        Tracer.Magnets.Enabled = Value
+    end
+}
+
+Magnets:Slider{
+    Name = "Radius",
+    Default = 0,
+    Min = 0,
+    Max = 70,
+    Decimals = 1,
+    Flag = "moooooo",
+    callback = function(Value)
+        Tracer.Magnets.Radius = Value
+    end
+}
+
+Magnets:Slider{
+    Name = "Multiplier",
+    Default = 1,
+    Min = 1,
+    Max = 5,
+    Decimals = 1,
+    Flag = "moooooo",
+    callback = function(Value)
+        Tracer.Magnets.Multiplier = Value
+    end
+}
+
+Magnets:dropdown{
+    name = "Types",
+    content = {"Legit", "Blatant", "League", "Custom"},
+    multichoice = false,
+    callback = function(Value)
+        Tracer.Magnets.Type = Value
+    end
+}
+
+Magnets:Toggle{
+    Name = "Show Hitbox",
+    flag = "ooolol", 
+    callback = function(Value)
+        Tracer.Magnets.ShowHitbox = Value
+    end
+}
+
+firetouchinterest = IS_SOLARA and IS_ZORARA and function(part2, part1, state)
+	state = state == 1
+	local fakeBall = fakeBalls[part1]
+	if not fakeBall then return end
+	
+	local direction = (part2.Position - fakeBall.Position).Unit
+	local distance = (part2.Position - fakeBall.Position).Magnitude
+	
+	for i = 1, 10, 1 do
+		local percentage = i / 10 + Random.new():NextNumber(0.02, 0.05)
+		part1.CFrame = fakeBall.CFrame + (direction * distance * percentage)
+	end
+end or firetouchinterest
+
+local part = Instance.new("Part")
+part.Transparency = 0.5
+part.Anchored = true
+part.CanCollide = false
+part.CastShadow = false
+
+local function onCharacterCatching(character)
+	local arm = character:WaitForChild('Left Arm')
+
+	arm.ChildAdded:Connect(function(child)
+		if not child:IsA("Weld") then return end
+		isCatching = true
+		task.wait(1.7)
+		isCatching = false
+	end)
+end
+
+workspace.ChildAdded:Connect(function(ball)
+	if ball.Name ~= "Football" then return end
+	if not ball:IsA("BasePart") then return end
+	task.wait()
+
+	local lastPosition = ball.Position
+	local lastCheck = tick()
+	local initalVelocity = ball.AssemblyLinearVelocity
+
+	if IS_SOLARA and IS_ZORARA and ball:FindFirstChildWhichIsA("Trail") and not ball.Anchored and camera.CameraSubject ~= ball then
+		local fakeBall = ball:Clone()
+		fakeBall.Name = "FFootball"
+		fakeBall.Parent = workspace
+		fakeBall.Anchored = true
+		fakeBall.CanCollide = false
+		fakeBall:FindFirstChildWhichIsA('PointLight'):Destroy()
+		ball.Transparency = 1
+		local spiralDegrees = 0
+		fakeBalls[ball] = fakeBall
+		task.spawn(function()
+			while ball.Parent == workspace do
+				local dt = runService.Heartbeat:Wait()
+				spiralDegrees += 1500 * dt
+				initalVelocity += Vector3.new(0, -28 * dt, 0)
+				fakeBall.Position += initalVelocity * dt
+				fakeBall.CFrame = CFrame.lookAt(fakeBall.Position, fakeBall.Position + initalVelocity) * CFrame.Angles(math.rad(90), math.rad(spiralDegrees), 0)
+
+				if ball:FindFirstChildWhichIsA("Trail") then
+					ball:FindFirstChildWhichIsA("Trail").Enabled = false
+				end	
+			end
+			fakeBall:Destroy()
+		end)
+	end
+
+	while ball.Parent do
+		task.wait()
+
+		local t = (tick() - lastCheck)
+		velocity[ball] = (ball.Position - lastPosition) / t
+
+		lastCheck = tick()
+		lastPosition = ball.Position
+	end
+end)
+
+task.spawn(function()
+	while true do
+		task.wait()
+		local ball = findClosestBall(); if not ball then part.Parent = nil continue end
+		local character = player.Character
+
+		if not character then continue end
+
+		local catchPart = getNearestPartToPartFromParts(ball, {character:FindFirstChild("CatchLeft"), character:FindFirstChild("CatchRight")})
+
+		if not catchPart then continue end
+		if not velocity[ball] then continue end
+		if not Tracer.Magnets.Enabled then continue end
+		
+		if IS_SOLARA and IS_ZORARA and not IS_PRACTICE and values.PlayType.Value ~= "normal" then
+			continue
+		end
+		
+		if Tracer.Magnets.Type == "League" then
+			local predictedPosition = (fakeBalls[ball] or ball).Position + (velocity[ball] * ping)
+			local distance = (catchPart.Position - predictedPosition).Magnitude
+			local clientDistance = ((fakeBalls[ball] or ball).Position - catchPart.Position).Magnitude
+
+			local y1 = predictedPosition.Y
+			local y2 = catchPart.Position.Y
+
+			part.Position = predictedPosition
+			part.Parent = Tracer.Magnets.ShowHitbox and workspace or nil
+
+			part.Color = Color3.fromRGB(255, 255, 255)
+			part.Size = Vector3.new(4, 1, 2)
+
+			if (y1 - y2) > 3.5 then continue end
+			if (distance) > 4 and clientDistance > 6 then continue end
+			if not isCatching and IS_SOLARA and IS_ZORARA then continue end
+
+			part.Color = Color3.fromRGB(255, 0, 0)
+
+			firetouchinterest(catchPart, ball, 0)
+			firetouchinterest(catchPart, ball, 1)
+		else
+			local distance = (catchPart.Position - ball.Position).Magnitude
+			local radius = ((Tracer.Magnets.Type == "Custom" and Tracer.Magnets.Radius) or Tracer.Magnets.Type == "Blatant" and 50 or 6)
+			part.Position = (fakeBalls[ball] or ball).Position
+			part.Size = Vector3.new(radius, radius, radius)
+			part.Parent = Tracer.Magnets.ShowHitbox and workspace or nil
+			part.Color = Color3.fromRGB(173, 173, 173)
+
+			if distance < radius * Tracer.Magnets.Multiplier or 1 then
+				firetouchinterest(catchPart, ball, 0)
+				firetouchinterest(catchPart, ball, 1)
+			end
+		end
+	end
+end)
+
+onCharacterCatching(player.Character)
+player.CharacterAdded:Connect(onCharacterCatching)
+
+PullVector:Toggle{
+    Name = "Enable",
+    flag = "ooolol", 
+    callback = function(Value)
+        Tracer.PullVector.Enabled = Value
+    end
+}
+
+PullVector:Slider{
+    Name = "Radius",
+    Default = 0,
+    Min = 0,
+    Max = 40,
+    Decimals = 1,
+    Flag = "moooooo",
+    callback = function(Value)
+        Tracer.PullVector.Radius = Value
+    end
+}
+
+PullVector:Slider{
+    Name = "Power",
+    Default = 0,
+    Min = 0,
+    Max = 5,
+    Decimals = 1,
+    Flag = "moooooo",
+    callback = function(Value)
+        Tracer.PullVector.Power = Value
+    end
+}
+
+PullVector:dropdown{
+    name = "Types",
+    content = {"Teleport", "Glide"},
+    multichoice = false,
+    callback = function(Value)
+        Tracer.PullVector.Type = Value
+    end
+}
+
+-- // Player Tab //
+
+JumpPower:Toggle{
+    Name = "Enable",
+    flag = "ooolol", 
+    callback = function(Value)
+        Tracer.Player.JumpPower = Value
+    end
+}
+
+JumpPower:Slider{
+    Name = "JP",
+    Default = 50,
+    Min = 50,
+    Max = 70,
+    Decimals = 1,
+    Flag = "moooooo",
+    callback = function(Value)
+        Tracer.Player.JumpPowerValue = Value
+    end
+}
+
+AngleEnhancer:Toggle{
+    Name = "Enabled",
+    flag = "ooolol", 
+    callback = function(Value)
+        Tracer.Player.AngleEnhancer = Value
+    end
+}
+
+AngleEnhancer:Toggle{
+    Name = "Indicator",
+    flag = "ooolol", 
+    callback = function(Value)
+        Tracer.Player.AngleEnhancerIndicator = Value
+    end
+}
+
+AngleEnhancer:Slider{
+    Name = "JP",
+    Default = 50,
+    Min = 50,
+    Max = 70,
+    Decimals = 1,
+    Flag = "moooooo",
+    callback = function(Value)
+        Tracer.Player.AngleEnhancerJP = Value
+    end
+}
+
+PhysicsSettings:Toggle{
+    Name = "Anti OOB",
+    flag = "ooolol", 
+    callback = function(Value)
+		Value = Tracer.Player.AntiOOB
+		for index, boundary in pairs(boundaries) do
+			boundary.Parent = not Value and workspace.Models.Boundaries or nil
+		end
+    end
+}
+
+PhysicsSettings:Toggle{
+    Name = "Anti Block",
+    flag = "ooolol", 
+    callback = function(Value)
+		Tracer.Player.AntiBlock = Value
+    end
+}
+
+PhysicsSettings:Toggle{
+    Name = "Anti Jam",
+    flag = "ooolol", 
+    callback = function(Value)
+		Tracer.Player.AntiJam = Value
+    end
+}
+
+PhysicsSettings:Toggle{
+    Name = "No JP Cooldown",
+    flag = "ooolol", 
+    callback = function(Value)
+		Tracer.Player.NoJumpCooldown = Value
+    end
+}
+
+PhysicsSettings:Toggle{
+    Name = "No Freeze",
+    flag = "ooolol", 
+    callback = function(Value)
+		Tracer.Player.NoFreeze = Value
+    end
+}
+
+PhysicsSettings:Toggle{
+    Name = "Quick TP",
+    flag = "ooolol", 
+    callback = function(Value)
+		Tracer.Miscellanous.QuickTP = Value
+    end
+}
+
+PhysicsSettings:Slider{
+    Name = "Quick TP Distance",
+    Default = 0,
+    Min = 0,
+    Max = 5,
+    Decimals = 1,
+    Flag = "moooooo",
+    callback = function(Value)
+        Tracer.Miscellanous.QuickTPSpeed = Value
+    end
+}
+
+if AC_BYPASS then
+	PhysicsSettings:Toggle{
+		Name = "Tackle Extender",
+		flag = "ooolol", 
+		callback = function(Value)
+			Tracer.Player.TackleExtender = Value
+		end
+	}
+	
+	PhysicsSettings:Slider{
+		Name = "Tackle Extender Radius",
+		Default = 0,
+		Min = 0,
+		Max = 10,
+		Decimals = 1,
+		Flag = "moooooo",
+		callback = function(Value)
+			Tracer.Player.TackleExtenderRadius = Value
+		end
+	}
+
+	task.spawn(function()
+		while true do
+			task.wait()
+			
+			local possessor = findPossessor()
+			local character = player.Character
+			local hrp = character and character:FindFirstChild("HumanoidRootPart")
+			
+			if not hrp then continue end
+			if not possessor then continue end
+			
+			local distance = (hrp.Position - possessor.HumanoidRootPart.Position).Magnitude
+			
+			if distance < Tracer.Player.TackleExtenderRadius then continue end
+			
+			for index, part in pairs(possessor:GetChildren()) do
+				if not part:IsA("BasePart") then continue end
+				if not character:FindFirstChild(part.Name) then continue end
+				firetouchinterest(character:FindFirstChild(part.Name), part, 0)
+				firetouchinterest(character:FindFirstChild(part.Name), part, 1)
+			end
+		end
+	end)
+end
+
+if AC_BYPASS then
+	PhysicsSettings:Toggle{
+		Name = "Block Extender",
+		flag = "ooolol", 
+		callback = function(Value)
+			Tracer.Player.BlockExtender = Value
+		end
+	}
+	
+	PhysicsSettings:Toggle{
+		Name = "Block Extender Radius",
+		flag = "ooolol", 
+		callback = function(Value)
+			Tracer.Player.BlockExtenderRadius = Value
+		end
+	}
+
+	PhysicsSettings:Slider{
+		Name = "Block Extender Transparency",
+		Default = 20,
+		Min = 20,
+		Max = 23,
+		Decimals = 1,
+		Flag = "moooooo",
+		callback = function(Value)
+			Tracer.Player.BlockExtenderRadiusTransparency = Value
+		end
+	}
+
+	task.spawn(function()
+		while true do
+			task.wait()
+			
+			local character = player.Character
+			local blockPart = character and character:FindFirstChild("BlockPart")
+		
+			if not blockPart then continue end
+			
+			blockPart.Size = Tracer.Player.BlockExtenderRadius and Vector3.new(Tracer.Player.BlockExtenderRadius, Tracer.Player.BlockExtenderRadius, Tracer.Player.BlockExtenderRadius) or Vector3.new(0.75, 5, 1.5)
+			blockPart.Transparency = Tracer.Player.BlockExtenderRadiusTransparency and Tracer.Player.BlockExtenderRadiusTransparency or 1
+		end
+	end)
+end
+
+WalkSpeed:Toggle{
+    Name = "Walk Speed",
+    flag = "ooolol", 
+    callback = function(Value)
+		Tracer.Player.WalkSpeed = Value
+    end
+}
+
+WalkSpeed:Slider{
+    Name = "Speed",
+    Default = 20,
+    Min = 20,
+    Max = 23,
+    Decimals = 1,
+    Flag = "moooooo",
+    callback = function(Value)
+        Tracer.Player.Speed = Value
+    end
+}
+
+if AC_BYPASS then
+	CFrameSpeed:Toggle{
+		Name = "CFrame Speed",
+		flag = "ooolol", 
+		callback = function(Value)
+			Tracer.Player.CFrameSpeed = Value
+		end
+	}
+	
+	CFrameSpeed:Slider{
+		Name = "Speed",
+		Default = 0,
+		Min = 0,
+		Max = 10,
+		Decimals = 1,
+		Flag = "moooooo",
+		callback = function(Value)
+			Tracer.Player.CFrameSpeedValue = Value
+		end
+	}
+
+	task.spawn(function()
+		while true do task.wait();
+			if not Tracer.Player.CFrameSpeed then continue end
+			
+			local character = player.Character
+			local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
+			local humanoid = character and character:FindFirstChild("Humanoid")
+
+			if not humanoidRootPart or not humanoid then continue end
+
+			local moveDirection = ((os.clock() - (moveToUsing[#moveToUsing] or 0)) < 0.5 and (humanoid.WalkToPoint - character.HumanoidRootPart.Position).Unit) or (humanoid.MoveDirection)
+
+			humanoidRootPart.CFrame += moveDirection * (Tracer.Player.CFrameSpeedValue / 58.5)
+		end
+	end)
+end
+
+if AC_BYPASS then
+    local flying = false
+    local flySpeed = 1
+
+    Fly:Toggle{
+        Name = "Fly",
+        flag = "ooolol", 
+        callback = function(Value)
+            flying = Value
+
+            if flying then
+                player.Character.Humanoid.PlatformStand = true
+                local bodyVelocity = Instance.new("BodyVelocity", player.Character.HumanoidRootPart)
+                local camera = workspace.CurrentCamera
+                bodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+                bodyVelocity.Velocity = Vector3.new(0, 0, 0)
+                local bodyGyro = Instance.new("BodyGyro", player.Character.HumanoidRootPart)
+                bodyGyro.P = 15000
+                bodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+
+                local flyingConnection
+                flyingConnection = runService.Stepped:Connect(function()
+                    if not flying then
+                        flyingConnection:Disconnect()
+                        player.Character.Humanoid.PlatformStand = false
+                        bodyGyro:Destroy()
+                        bodyVelocity:Destroy()
+                        return
+                    end
+
+                    local speed = 11 + (flySpeed * 2.5)
+                    local endPos = camera.CFrame.Position + camera.CFrame.LookVector * 500
+                    bodyGyro.CFrame = CFrame.new(player.Character.HumanoidRootPart.Position, endPos)
+                    local velocity = Vector3.new(0, 0, 0)
+
+                    if not userInputService:GetFocusedTextBox() then
+                        if userInputService:IsKeyDown(Enum.KeyCode.W) then
+                            velocity += camera.CFrame.LookVector * speed
+                        end
+                        if userInputService:IsKeyDown(Enum.KeyCode.S) then
+                            velocity += camera.CFrame.LookVector * -speed
+                        end
+                        if userInputService:IsKeyDown(Enum.KeyCode.A) then
+                            velocity += player.Character.HumanoidRootPart.CFrame:VectorToWorldSpace(Vector3.new(-speed, 0, 0))
+                        end
+                        if userInputService:IsKeyDown(Enum.KeyCode.D) then
+                            velocity += player.Character.HumanoidRootPart.CFrame:VectorToWorldSpace(Vector3.new(speed, 0, 0))
+                        end
+                    end
+
+                    if player.Character.Humanoid.Health <= 0 then
+                        flying = false
+                    end
+
+                    bodyVelocity.Velocity = velocity
+                end)
+            end
+        end
+    }
+
+    Fly:Slider{
+        Name = "Speed",
+        Default = 0,
+        Min = 0,
+        Max = 10,
+        Decimals = 1,
+        Flag = "moooooo",
+        callback = function(Value)
+            flySpeed = Value
+        end
+    }
+end
+
+local track = nil
+
+if AC_BYPASS then
+    PhysicsSettings:Toggle{
+        Name = "UnderGround",
+        flag = "ooolol", 
+        callback = function(Value)
+            if Value then
+                local Anim = Instance.new("Animation")
+                Anim.AnimationId = "rbxassetid://182724289"
+                track = game.Players.LocalPlayer.Character.Humanoid:LoadAnimation(Anim)
+                track:Play(.1, 1, 1)
+                
+                local part = Instance.new("Part")
+                part.Size = Vector3.new(500, 0.001, 500)
+                part.CFrame = CFrame.new(Vector3.new(10.3562937, -1.51527438, 30.4708614))
+                part.Anchored = true
+                part.Parent = game.Workspace
+                
+                local model = game:GetService("Workspace").Models.Field.Grass
+                for _, part in pairs(model:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part.CanCollide = false
+                        part.Transparency = .5
+                    end
+                end
+            else
+                if track then
+                    track:Stop()
+                end
+                
+                local model = game:GetService("Workspace").Models.Field.Grass
+                for _, part in pairs(model:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part.Transparency = 0
+                        part.CanCollide = true
+                    end
+                end
+            end
+        end
+    }
+end
+
+-- // Miscellanous //
+
+MiscellanousSettings:Toggle{
+    Name = "Click Tackle Aimbot",
+    flag = "ooolol", 
+    callback = function(Value)
+		Tracer.Miscellanous.ClickTackleAimbot = Value
+    end
+}
+
+MiscellanousSettings:Slider{
+    Name = "Click Tackle Aimbot Distance",
+    Default = 0,
+    Min = 0,
+    Max = 5,
+    Decimals = 1,
+    Flag = "moooooo",
+    callback = function(Value)
+        Tracer.Miscellanous.QuickTPSpeed = Value
+    end
+}
+
+MiscellanousSettings:Toggle{
+    Name = "Visualise Ball Path",
+    flag = "ooolol", 
+    callback = function(Value)
+		Tracer.Miscellanous.VisualiseBallPath = Value
+    end
+}
+
+MiscellanousSettings:Toggle{
+    Name = "Optimal Jump",
+    flag = "ooolol", 
+    callback = function(Value)
+		Tracer.Miscellanous.OptimalJumpPredictions = Value
+    end
+}
+
+MiscellanousSettings:dropdown {
+    name = "Optimal Jump Type",
+    content = {"Jump", "Dive"},
+    multichoice = false, -- true is multi dropdown false is regular dropdown
+    callback = function(Value) --
+		Tracer.Miscellanous.OptimalJumpType = Value
+    end
+}
+
+MiscellanousSettings:Toggle{
+    Name = "No Ball Trail",
+    flag = "ooolol", 
+    callback = function(Value)
+		Tracer.Miscellanous.NoBallTrail = Value
+    end
+}
+
+-- // Automatics //
+
+AutomaticPhysics:Toggle{
+    Name = "Auto Kick",
+    flag = "ooolol", 
+    callback = function(Value)
+		Tracer.Automatics.AutoKick = Value
+    end
+}
+
+AutomaticPhysics:Slider{
+    Name = "Auto Kick Power",
+    Default = 100,
+    Min = 0,
+    Max = 100,
+    Decimals = 1,
+    Flag = "moooooo",
+    callback = function(Value)
+        Tracer.Automatics.AutoKickPower = Value
+    end
+}
+
+AutomaticPhysics:Slider{
+    Name = "Auto Kick Accuracy",
+    Default = 100,
+    Min = 0,
+    Max = 100,
+    Decimals = 1,
+    Flag = "moooooo",
+    callback = function(Value)
+        Tracer.Automatics.AutoKickAccuracy = Value
+    end
+}
+
+AutomaticPhysics:Toggle{
+    Name = "Auto Catch",
+    flag = "ooolol", 
+    callback = function(Value)
+		Tracer.Automatics.AutoCatch = Value
+    end
+}
+
+AutomaticPhysics:Slider{
+    Name = "Auto Catch Radius",
+    Default = 15,
+    Min = 0,
+    Max = 15,
+    Decimals = 1,
+    Flag = "moooooo",
+    callback = function(Value)
+        Tracer.Automatics.AutoCatchRadius = Value
+    end
+}
+
+AutomaticPhysics:Toggle{
+    Name = "Auto Swat",
+    flag = "ooolol", 
+    callback = function(Value)
+		Tracer.Automatics.AutoSwat = Value
+    end
+}
+
+AutomaticPhysics:Slider{
+    Name = "Auto Swat Radius",
+    Default = 15,
+    Min = 0,
+    Max = 15,
+    Decimals = 1,
+    Flag = "moooooo",
+    callback = function(Value)
+        Tracer.Automatics.AutoSwatRadius = Value
+    end
+}
+
+AutomaticPhysics:Toggle{
+    Name = "Auto Boost",
+    flag = "ooolol", 
+    callback = function(Value)
+		Tracer.Automatics.AutoBoost = Value
+    end
+}
+
+AutomaticPhysics:Slider{
+    Name = "Auto Boost Power",
+    Default = 0,
+    Min = 0,
+    Max = 15,
+    Decimals = 1,
+    Flag = "moooooo",
+    callback = function(Value)
+        Tracer.Automatics.AutoBoostPower = Value
+    end
+}
+
+AutomaticSettings:Toggle{
+    Name = "Auto QB",
+    flag = "ooolol", 
+    callback = function(Value)
+		Tracer.Automatics.AutoQB = Value
+    end
+}
+
+AutomaticSettings:dropdown {
+    name = "Auto QB Type",
+    content = {"Legit", "Blatant"},
+    multichoice = false, -- true is multi dropdown false is regular dropdown
+    callback = function(Value) --
+		Tracer.Automatics.AutoQBType = Value
+    end
+}
+
+AutomaticSettings:Toggle{
+    Name = "Auto Captain",
+    flag = "ooolol", 
+    callback = function(Value)
+		Tracer.Automatics.AutoCaptain = Value
+    end
+}
+
+AutomaticSettings:Toggle{
+    Name = "Auto Rush",
+    flag = "ooolol", 
+    callback = function(Value)
+		Tracer.Automatics.AutoRush = Value
+    end
+}
+
+AutomaticSettings:Toggle{
+    Name = "Auto Rush Predictions",
+    flag = "ooolol", 
+    callback = function(Value)
+		Tracer.Automatics.AutoRushPredict = Value
+    end
+}
+
+AutomaticSettings:Slider{
+    Name = "Auto Rush Delay",
+    Default = 0,
+    Min = 0,
+    Max = 15,
+    Decimals = 1,
+    Flag = "moooooo",
+    callback = function(Value)
+        Tracer.Automatics.AutoRushDelay = Value
+    end
+}
+
+-- // QB //
+
+QBStuff:Toggle{
+    Name = "QB Aimbot",
+    flag = "ooolol", 
+    callback = function(Value)
+		Settings.QBAimbot = Value
+    end
+}
+
+QBStuff:Toggle{
+    Name = "Auto Angle",
+    flag = "ooolol", 
+    callback = function(Value)
+		Settings.QBAimbotAutoAngle = Value
+    end
+}
+
+QBStuff:Toggle{
+    Name = "Auto Choose Throw Type",
+    flag = "ooolol", 
+    callback = function(Value)
+		Settings.QBAimbotAutoThrowType = Value
+    end
+}
+
+QBStuff:Toggle{
+    Name = "95 Power Mode",
+    flag = "ooolol", 
+    callback = function(Value)
+		Settings.QBAimbot95PowerOnly = Value
+    end
+}
+
+QBStuff:Toggle{
+    Name = "Visualise UI",
+    flag = "ooolol", 
+    callback = function(Value)
+		Settings.QBAimbotUI = Value
+    end
+}
+
+QBStuff:Toggle{
+    Name = "Visualise Beam and Highlights",
+    flag = "ooolol", 
+    callback = function(Value)
+		Settings.QBAimbotVisualise = Value
+    end
+}
+
+XDistance:Slider{
+    Name = "X Lead",
+    Default = 0,
+    Min = -5,
+    Max = 5,
+    Decimals = 1,
+    Flag = "moooooo",
+    callback = function(Value)
+        offsets[throwType].xLead = Value
+    end
+}
+
+YDistance:Slider{
+    Name = "Y Lead",
+    Default = 0,
+    Min = -5,
+    Max = 5,
+    Decimals = 1,
+    Flag = "moooooo",
+    callback = function(Value)
+        offsets[throwType].yLead = Value
+    end
+}
+
+AntiOOB:Toggle{
+    Name = "Anti OOB",
+    flag = "ooolol", 
+    callback = function(Value)
+		Settings.QBAimbot95PowerOnly = Value
+    end
+}
+
+AntiOOB:Slider{
+    Name = "Anti OOB Threshold",
+    Default = 0,
+    Min = -15,
+    Max = 15,
+    Decimals = 1,
+    Flag = "moooooo",
+    callback = function(Value)
+        Settings.QBAimbotAntiOOBThreshold = Value
+    end
+}
+
+-- // Visuals //
+
+Visuals:Toggle{
+    Name = "No Textures",
+    flag = "ooolol", 
+    callback = function(Value)
+		toggleRenderingTextures(not Value)
+    end
+}
+
+-- // Configs //
+
+local configSavingUI = game:GetObjects("rbxassetid://18676479489")[1]:Clone()
+configSavingUI.Parent = (gethui and gethui()) or game:GetService("CoreGui")
+configSavingUI.Enabled = false
+
+local gameConfigFolder = "Tracer/" .. tostring(game.PlaceId)
+
+ConfigsStuff:Button({
+    name = "Save Config",
+    callback = function(Value)
+		configSavingUI.Enabled = true
+	
+		local configName = nil
+		
+		local connection; connection = configSavingUI.Frame.Button.MouseButton1Click:Connect(function()
+			configName = configSavingUI.Frame.TextBox.Text
+			connection:Disconnect()
+		end)
+		
+		repeat task.wait() until configName
+		
+		configSavingUI.Enabled = false
+		
+		Library:SaveConfig(configName)
+    end
+})
+
+ConfigsStuff:Button({
+    name = "Load Config",
+    callback = function(Value)
+		configSavingUI.Enabled = true
+
+		local configName = nil
+	
+		local connection; connection = configSavingUI.Frame.Button.MouseButton1Click:Connect(function()
+			configName = configSavingUI.Frame.TextBox.Text
+			connection:Disconnect()
+		end)
+	
+		repeat task.wait() until configName
+	
+		configSavingUI.Enabled = false
+	
+		if not isfile("Tracer/" .. configName .. ".cfg") then
+			print("Configuration file does not exist.")
+			return
+		end
+	
+		local contents = readfile(gameConfigFolder .. "/" .. configName .. ".cfg")
+		Library:LoadConfig(contents)
+    end
+})
+
+-- // Main Code //
+
+local function onCharacterMovement(character)
+    local humanoid = character:WaitForChild("Humanoid")
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+    humanoid.StateChanged:Connect(function(_, newState)
+        if newState == Enum.HumanoidStateType.Jumping and Tracer.Player.JumpPower then
+            task.wait(0.05)
+            humanoidRootPart.AssemblyLinearVelocity += Vector3.new(0, Tracer.Player.JumpPowerValue - 50, 0)
+        end
+    end)
+end
+
+onCharacterMovement(player.Character or player.CharacterAdded:Wait())
+
+local AC_BYPASS = false
+
+task.spawn(function()
+	local angleTick = os.clock()
+	local oldLookVector = Vector3.new(0, 0, 0)
+	
+	local shiftLockEnabled = false
+	local lastEnabled = false
+
+    local skibidijp = 50
+
+	local function hookCharacter(character)
+		local humanoid = character:WaitForChild("Humanoid")
+		local hrp = character:WaitForChild("HumanoidRootPart")
+
+		humanoid.Jumping:Connect(function()
+			if humanoid:GetState() ~= Enum.HumanoidStateType.Jumping then return end
+			if os.clock() - angleTick > 0.2 then return end
+			if not Tracer.Player.AngleEnhancer then return end
+
+			if Tracer.Player.AngleEnhancerIndicator then
+				local h = Instance.new("Hint")
+				h.Text = "Angled"
+				h.Parent = workspace
+
+				debris:AddItem(h, 1)
+			end
+			
+			if AC_BYPASS then return end
+
+			task.wait(0.05); hrp.AssemblyLinearVelocity += Vector3.new(0, Tracer.Player.AngleEnhancerJP - 50, 0)
+		end)
+	end
+
+	hookCharacter(player.Character or player.CharacterAdded:Wait())
+
+	player.CharacterAdded:Connect(hookCharacter)
+	
+	userInputService:GetPropertyChangedSignal("MouseBehavior"):Connect(function()
+		if userInputService.MouseBehavior == Enum.MouseBehavior.LockCenter then
+			shiftLockEnabled = true
+		else
+			shiftLockEnabled = false
+		end
+	end)
+
+	while true do
+		task.wait()
+		local character = player.Character; if not character then continue end
+		local hrp = character:FindFirstChild("HumanoidRootPart"); if not hrp then continue end
+		local humanoid = character:FindFirstChild("Humanoid"); if not humanoid then continue end
+
+		local lookVector = hrp.CFrame.LookVector
+		local difference = (oldLookVector - lookVector).Magnitude
+
+		if not shiftLockEnabled and lastEnabled then
+			angleTick = os.clock()
+		end
+		
+		if AC_BYPASS then
+			if (os.clock() - angleTick < 0.2) and Tracer.Player.AngleEnhancer then
+				humanoid.JumpPower = (Tracer.Player.JumpPower and skibidijp or 50) + (Tracer.Player.AngleEnhancerJP - 50)
+			elseif not Tracer.Player.AngleEnhancer then
+				humanoid.JumpPower = (Tracer.Player.JumpPower and skibidijp or 50)
+			end
+		end
+
+		oldLookVector = hrp.CFrame.LookVector
+		lastEnabled = shiftLockEnabled
+	end
+end)
+
+task.spawn(function()
+	local lastTeleported = os.clock()
+	
+	while true do
+		task.wait()
+		if not Tracer.Automatics.AutoQB then continue end
+		if values.Status.Value ~= "PrePlay" then continue end	
+		if values.PlayType.Value ~= "normal" then continue end
+		if values.PossessionTag.Value ~= player.Team.Name then continue end
+
+		local character = player.Character
+		local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
+		local humanoid = character and character:FindFirstChild("Humanoid")
+		
+		if not humanoidRootPart then continue end
+		if not humanoid then continue end
+		
+		local ball = findClosestBall()
+		if not ball then continue end
+		
+		if Tracer.Automatics.AutoQBType == "Blatant" then
+			if (os.clock() - lastTeleported) < 3 then continue end
+			lastTeleported = os.clock()
+			humanoidRootPart.CFrame = ball.CFrame
+		else
+			moveToUsing[#moveToUsing + 1] = os.clock()
+			humanoid:MoveTo(ball.Position)
+		end
+	end
+end)
+
+task.spawn(function()
+	local log = {}
+
+	while true do
+		task.wait(1/30)
+		local possessor = findPossessor()
+		local character = player.Character
+		local humanoid = character and character:FindFirstChild("Humanoid")
+		local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
+
+		if not humanoidRootPart then continue end
+		if not humanoid then continue end
+		if not possessor then log = {} continue end
+		if not possessor:FindFirstChild("HumanoidRootPart") then continue end
+
+		local delayedPosition = log[math.max(#log - math.round(Tracer.Automatics.AutoRushDelay / (1/30)), 1)]
+		
+		log[#log + 1] = possessor.HumanoidRootPart.Position
+		
+		if not delayedPosition then continue end
+		
+		local timeToMoveTo = (humanoidRootPart.Position - delayedPosition).Magnitude / 20
+		local predictedPosition = delayedPosition + (possessor.Humanoid.MoveDirection * timeToMoveTo * 20)
+
+		if not Tracer.Automatics.AutoRush then continue end
+		
+		moveToUsing[#moveToUsing + 1] = os.clock()
+		humanoid:MoveTo(Tracer.Automatics.AutoRushPredict and predictedPosition or delayedPosition)
+	end
+end)
+
+local finishLine = not IS_PRACTICE and workspace.Models.LockerRoomA.FinishLine or Instance.new('Part')
+
+finishLine:GetPropertyChangedSignal("CFrame"):Connect(function()
+	if Tracer.Automatics.AutoCaptain and not isCatching and finishLine.Position.Y > 0 then
+		for i = 1,7,1 do
+			task.wait(0.2)
+			player.Character.HumanoidRootPart.CFrame = finishLine.CFrame + Vector3.new(0, 2, 0)
+		end
+	end
+end)
+
+player.PlayerGui.ChildAdded:Connect(function(child)
+	if child.Name == "KickerGui" and Tracer.Automatics.AutoKick then
+		local cursor = child:FindFirstChild("Cursor", true)
+		
+		repeat task.wait() until cursor.Position.Y.Scale < 0.01 + ((100 - Tracer.Automatics.AutoKickPower) * 0.012) + (fps < 45 and 0.01 or 0)
+		mouse1click()
+		repeat task.wait() until cursor.Position.Y.Scale > 0.9 - ((100 - Tracer.Automatics.AutoKickAccuracy) * 0.001)
+		mouse1click()
+	end
+end)
+
+task.spawn(function()
+	while true do
+		task.wait()
+		
+		local ball = findClosestBall()
+		if not ball then continue end
+		
+		local character = player.Character
+		local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
+		
+		if not character or not humanoidRootPart then continue end
+		
+		local distance = (humanoidRootPart.Position - ball.Position).Magnitude
+		
+		if distance < Tracer.Automatics.AutoCatchRadius and Tracer.Automatics.AutoCatch then
+			mouse1click()
+		end
+		
+		if distance < Tracer.Automatics.AutoSwatRadius and Tracer.Automatics.AutoSwat then
+			keypress(0x52)
+			keyrelease(0x52)
+		end
+	end
+end)
+
+runService:BindToRenderStep("walkSpeed", Enum.RenderPriority.Character.Value, function()
+    local character = player.Character
+    local humanoid = character and character:FindFirstChild("Humanoid")
+
+    if not character or not humanoid then return end
+    
+    if humanoid:GetState() ~= Enum.HumanoidStateType.Running then return end
+    
+    if humanoid.WalkSpeed == 0 and not Tracer.Player.NoFreeze then return end
+    
+    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+    if not humanoidRootPart then return end
+    
+    local moveDirection
+    if (os.clock() - (moveToUsing[#moveToUsing] or 0)) < 0.5 then
+        moveDirection = (humanoid.WalkToPoint - humanoidRootPart.Position).Unit
+    else
+        moveDirection = humanoid.MoveDirection
+    end
+    
+    local currentVel = humanoidRootPart.AssemblyLinearVelocity
+    
+    if Tracer.Player.WalkSpeed or Tracer.Player.NoFreeze then
+        local speedValue = Tracer.Player.WalkSpeed and (Tracer.Player.Speed > 20 and Tracer.Player.Speed or 20) or 20
+        humanoidRootPart.AssemblyLinearVelocity = Vector3.new(moveDirection.X * speedValue, currentVel.Y, moveDirection.Z * speedValue)
+    end
+end)
+
+local function onCharacterAutomatics(character)
+	local leftLeg = character:WaitForChild("Left Leg")
+	local rightLeg = character:WaitForChild("Right Leg")
+	
+	local humanoid = character:WaitForChild("Humanoid")
+	
+	local function onTouch(hit)
+		if not hit.Name:match("Arm") and not hit.Name:match("Head") then return end
+		if hit:IsDescendantOf(character) then return end
+		
+		if humanoid.FloorMaterial ~= Enum.Material.Air then return end
+		if Tracer.Automatics.AutoBoost then return end
+		
+		character.HumanoidRootPart.AssemblyLinearVelocity += Vector3.new(0, Tracer.Automatics.AutoBoostPower, 0)
+	end
+	
+	leftLeg.Touched:Connect(onTouch)
+	rightLeg.Touched:Connect(onTouch)
+end
+
+onCharacterAutomatics(player.Character or player.CharacterAdded:Wait())
+
+task.spawn(function()
+	while true do
+		task.wait()
+		local ball = findClosestBall()
+		if not ball then continue end
+		local character = player.Character
+		local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
+
+		if not ball:FindFirstChildWhichIsA("Trail") then continue end
+		if not character or not humanoidRootPart then continue end
+		if not Tracer.PullVector.Enabled then continue end
+		if pullVectoredBalls[ball] then continue end
+		if ball.Anchored then continue end
+
+		local distance = (humanoidRootPart.Position - ball.Position).Magnitude
+		if distance > Tracer.PullVector.Radius then continue end
+
+		local direction = (ball.Position - humanoidRootPart.Position).Unit
+		local newPosition
+
+		if Tracer.PullVector.Type == "Teleport" then
+			pullVectoredBalls[ball] = true
+			local teleportDistance = 10 + ((Tracer.PullVector.Power - 1) * 5)
+			newPosition = humanoidRootPart.Position + direction * teleportDistance
+		else
+			humanoidRootPart.AssemblyLinearVelocity = direction * math.min((Tracer.PullVector.Power * 25), distance)
+		end
+
+		if newPosition then
+			local raycastParams = RaycastParams.new()
+			raycastParams.FilterDescendantsInstances = {character}
+			raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+
+			local raycastResult = workspace:Raycast(newPosition, Vector3.new(0, -100, 0), raycastParams)
+
+			if raycastResult then
+				local groundY = raycastResult.Position.Y + 5
+				if newPosition.Y < groundY then
+					newPosition = Vector3.new(newPosition.X, groundY, newPosition.Z)
+				end
+			end
+
+			humanoidRootPart.CFrame = CFrame.new(newPosition)
+		end
+	end
+end)
+
+local quickTPCooldown = os.clock()
+
+userInputService.InputBegan:Connect(function(input, gp)
+	if gp then return end
+	if input.KeyCode ~= Tracer.Miscellanous.QuickTPBind then return end
+
+	local character = player.Character
+	local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
+	local humanoid = character and character:FindFirstChild("Humanoid")
+
+	if not Tracer.Miscellanous.QuickTP then return end
+	if not character or not humanoidRootPart or not humanoid then return end
+	if (os.clock() - quickTPCooldown) < 0.1 then return end
+
+	local speed = 2 + (Tracer.Miscellanous.QuickTPSpeed / 4)
+
+	humanoidRootPart.CFrame += humanoid.MoveDirection * speed
+	quickTPCooldown = os.clock()
+end)
+
+mouse.Button1Down:Connect(function()
+	if not Tracer.Miscellanous.ClickTackleAimbot then return end
+
+	local possessor = findPossessor()
+	local character = player.Character
+	local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
+
+	if not character or not humanoidRootPart then return end
+	if not possessor then return end
+
+	local distance = (possessor.HumanoidRootPart.Position - humanoidRootPart.Position).Magnitude
+	if distance > Tracer.Miscellanous.ClickTackleAimbotRadius then return end
+
+	humanoidRootPart.CFrame = possessor.HumanoidRootPart.CFrame
+end)
+
+workspace.ChildAdded:Connect(function(ball)
+	task.wait()
+	if ball.Name ~= "Football" then return end
+	if not ball:IsA("BasePart") then return end
+
+	if Tracer.Miscellanous.NoBallTrail and ball:FindFirstChildWhichIsA("Trail") then
+		ball:FindFirstChildWhichIsA("Trail").Enabled = false
+	end
+
+	task.spawn(function()
+		if not Tracer.Miscellanous.OptimalJumpPredictions then return end
+		local initalVelocity = ball.AssemblyLinearVelocity
+		local optimalPosition = Vector3.zero
+
+		local currentPosition = ball.Position
+
+		local t = 0
+
+		while true do
+			t += 0.05
+			initalVelocity += Vector3.new(0, -28 * 0.05, 0)
+			currentPosition += initalVelocity * 0.05
+			local raycastParams = RaycastParams.new()
+			raycastParams.FilterDescendantsInstances = {workspace:FindFirstChild("Models")}
+			raycastParams.FilterType = Enum.RaycastFilterType.Include
+
+			local ray = workspace:Raycast(currentPosition, Vector3.new(0, Tracer.Miscellanous.OptimalJumpType == "Jump" and -13 or -15, 0), raycastParams)
+			local antiCrashRay = workspace:Raycast(currentPosition, Vector3.new(0, -500, 0), raycastParams)
+
+			if ray and t > 0.75 then
+				optimalPosition = ray.Position + Vector3.new(0, 2, 0)
+				break
+			end
+
+			if not antiCrashRay then
+				optimalPosition = currentPosition
+				break
+			end
+		end
+
+		local part = Instance.new("Part")
+		part.Shape = Enum.PartType.Ball
+		part.Anchored = true
+		part.Material = Enum.Material.SmoothPlastic
+		part.Size = Vector3.new(1.5, 1.5, 1.5)
+		part.Position = optimalPosition
+		part.CanCollide = false
+		part.Parent = workspace
+
+		repeat task.wait() until ball.Parent ~= workspace
+
+		part:Destroy()
+	end)
+
+	task.spawn(function()
+		if not Tracer.Miscellanous.VisualiseBallPath then return end
+		local initalVelocity = ball.AssemblyLinearVelocity
+		local a0, a1 = Instance.new("Attachment"), Instance.new("Attachment")
+		a0.Parent = workspace.Terrain; a1.Parent = workspace.Terrain
+
+		local beam = Instance.new("Beam", workspace.Terrain)
+		beam.Attachment0 = a0
+		beam.Attachment1 = a1
+		beam.Segments = 500
+		beam.Width0 = 1
+		beam.Width1 = 1
+		beam.Transparency = NumberSequence.new(0)
+		beam.Color = ColorSequence.new(Color3.fromHex("#FFFFFF"))
+
+		local g = Vector3.new(0, -28 ,0)
+		local x0 = ball.Position
+		local v0 = initalVelocity
+
+		local curve0, curve1, cf1, cf2 = beamProjectile(g, v0, x0, 5)
+
+		beam.CurveSize0 = curve0
+		beam.CurveSize1 = curve1
+		a0.CFrame = a0.Parent.CFrame:inverse() * cf1
+		a1.CFrame = a1.Parent.CFrame:inverse() * cf2
+
+		repeat task.wait() until ball.Parent ~= workspace
+
+		beam:Destroy()
+	end)
+end)
+
+task.spawn(function()
+	local target = nil
+	local power = 65
+	local direction = Vector3.new(0, 1, 0)
+	local angle = 45
+	local locked = false
+	
+	local firedRemoteEvent = false
+
+	local within = table.find
+
+	local throwType = "Dive"
+	local nonVisualThrowType = nil
+	
+	local throwTypesSwitch = {
+		["Dive"] = "Mag",
+		["Mag"] = "Bullet",
+		["Bullet"] = "Jump",
+		["Jump"] = "Dime",
+		["Dime"] = "Dive"
+	}
+	
+	local moveDirection = {}
+
+	local a0, a1 = Instance.new("Attachment"), Instance.new("Attachment")
+	a0.Parent = workspace.Terrain; a1.Parent = workspace.Terrain
+
+	local beam = Instance.new("Beam", workspace.Terrain)
+	beam.Attachment0 = a0
+	beam.Attachment1 = a1
+	beam.Segments = 500
+	beam.Width0 = 0.5
+	beam.Width1 = 0.5
+	beam.Transparency = NumberSequence.new(0)
+	beam.Color = ColorSequence.new(Color3.fromHex("#7953FF"))
+
+	local cards = game:GetObjects("rbxassetid://18669853019")[1]:Clone()
+	cards.Parent = (gethui and gethui()) or game:GetService("CoreGui")
+	cards.Enabled = false
+
+	local highlight = Instance.new("Highlight")
+	highlight.FillColor = Color3.fromHex("#7953FF")
+	highlight.Parent = replicatedStorage
+	
+	local inbPart = Instance.new("Part")
+	inbPart.CanCollide = false
+	inbPart.Anchored = true
+	inbPart.Transparency = 1
+	inbPart.Position = IS_PRACTICE and Vector3.new(245, 40.55, 0) or Vector3.new(0, 40.55, 0)
+	inbPart.Size = Vector3.new(161, 75, 360)
+	inbPart.Parent = workspace
+
+	local keys = {
+		R = function()
+			angle = math.clamp(angle + 5, 5, 85)
+		end,
+		F = function()
+			angle = math.clamp(angle - 5, 5, 85)
+		end,
+		Q = function()
+			locked = not locked
+		end,
+		Z = function()
+			throwType = throwTypesSwitch[throwType]
+		end,
+	}
+
+	local sidewayRoutes = {"in/out", "flat"}
+	local inAirAdditiveRoutes = {"stationary", "curl/comeback"}
+
+	--// hooking
+
+	if not AC_BYPASS then
+		local lastQBAimbotValue = false
+		local remoteEvents = {}
+
+		local handoffToggle = false
+
+		local function onToggle()
+			local character = player.Character
+			local football = character:FindFirstChildWhichIsA("Tool")
+
+			if football then
+				if not remoteEvents[football] then
+					remoteEvents[football] = football.Handle:FindFirstChildWhichIsA("RemoteEvent")
+				end
+
+				local coreScript = football.Handle:FindFirstChildWhichIsA("LocalScript")
+
+				if not coreScript then return end
+
+				coreScript.Enabled = false
+
+				if Settings.QBAimbot then
+					local fakeRemoteEvent = Instance.new("BoolValue")
+					fakeRemoteEvent.Name = "RemoteEvent"
+					fakeRemoteEvent.Parent = football.Handle
+
+					remoteEvents[football].Parent = replicatedStorage
+				else
+					if football.Handle:FindFirstChildWhichIsA("BoolValue") then
+						football.Handle:FindFirstChildWhichIsA("BoolValue"):Destroy()
+					end
+
+					remoteEvents[football].Parent = football.Handle
+				end
+
+				coreScript.Enabled = true
+			end
+		end
+
+		local function onCharacter(char)
+			char.ChildAdded:Connect(function(tool)
+				task.wait(); if not tool:IsA("Tool") then return end
+				onToggle()
+			end)
+		end
+
+		onCharacter(player.Character)
+		player.CharacterAdded:Connect(onCharacter)
+
+		scriptContext.Error:Connect(function(message, stackTrace)
+			if not string.match(message, "Football") then return end
+
+			local nwArgs = {"Clicked", player.Character.Head.Position, player.Character.Head.Position + direction * 10000, (IS_PRACTICE and power) or 95, power}
+
+			if string.match(message, "ContextActionService") or string.match(stackTrace, "function ho") then
+				handoffToggle = not handoffToggle
+				nwArgs = {"x "..(handoffToggle and "down" or "up")}
+			end
+
+			local football = player.Character:FindFirstChildWhichIsA("Tool")
+			local remoteEvent = remoteEvents[football]
+
+			local function getAngle(from, vel)
+				local cf = CFrame.lookAt(from, from + vel)
+				local p = Instance.new("Part")
+				p.CFrame = cf
+				p:Destroy()
+
+				return p.Orientation.X
+			end
+			
+			firedRemoteEvent = true
+			remoteEvent:FireServer(unpack(nwArgs))
+		end)
+
+		task.spawn(function()
+			while true do
+				task.wait()
+				if lastQBAimbotValue ~= Settings.QBAimbot then
+					onToggle()
+				end
+
+				lastQBAimbotValue = Settings.QBAimbot
+			end
+		end)
+	end
+	
+	--// input handling
+
+	userInputService.InputBegan:Connect(function(input, gp)
+		if gp then return end
+		if not keys[input.KeyCode.Name] then return end
+
+		keys[input.KeyCode.Name]()
+	end)
+	
+	userInputService.InputBegan:Connect(function(input, gp)
+		if gp then return end
+		
+		if Settings.QBAimbotDimeKeybind == input.KeyCode then
+			throwType = "Dime"
+		end
+		
+		if Settings.QBAimbotJumpKeybind == input.KeyCode then
+			throwType = "Jump"
+		end
+		
+		if Settings.QBAimbotDiveKeybind == input.KeyCode then
+			throwType = "Dive"
+		end
+		
+		if Settings.QBAimbotMagKeybind == input.KeyCode then
+			throwType = "Mag"
+		end
+		
+		if Settings.QBAimbotBulletKeybind == input.KeyCode then
+			throwType = "Bullet"
+		end
+	end)
+
+	--// functions
+
+	local function getTimeForHeight(from, to, height)
+		local g = Vector3.new(0, -28, 0)
+		local conversionFactor = 4
+		local xMeters = height * conversionFactor
+
+		local a = 0.5 * g.Y
+		local b = to.Y - from.Y
+		local c = xMeters - from.Y
+
+		local discriminant = b * b - 4 * a * c
+		if discriminant < 0 then
+			return nil
+		end
+
+		local t1 = (-b + math.sqrt(discriminant)) / (2 * a)
+		local t2 = (-b - math.sqrt(discriminant)) / (2 * a)
+
+		local t = math.max(t1, t2)
+		return t
+	end
+
+	local function clamp_oobPosition(position)
+		inbPart.Size = Vector3.new(161 + (Settings.QBAimbotAntiOOBThreshold * 2), 75, 360 + (Settings.QBAimbotAntiOOBThreshold * 2))
+		return Vector3.new(
+			math.clamp(position.X, -inbPart.Size.X / 2 + inbPart.Position.X, inbPart.Size.X / 2 + inbPart.Position.X),
+			math.clamp(position.Y, -inbPart.Size.Y / 2, inbPart.Size.Y / 2),
+			math.clamp(position.Z, -inbPart.Size.Z / 2 + inbPart.Position.Z, inbPart.Size.Z / 2 + inbPart.Position.Z)
+		)
+	end
+
+	local function getVelocityForXYinTime(from, to, time)
+		local g = Vector3.new(0, -28, 0)
+		local v0 = (to - from - 0.5 * g * time * time) / time
+		local dir = ((from + v0) - from).Unit
+		local power = v0.Y / dir.Y
+		return v0, dir, math.clamp(math.round(power), 0, 95)
+	end
+
+	local function getVelocityForAngle(from, to, angle, standingStill)
+		local yMult = standingStill and
+			angle / 90 / ((angle > 65 and 1 - (angle - 70) / 25) or (angle > 50 and 1.6 - (angle - 55) / 50) or (angle > 40 and 1.9) or (angle > 30 and 2.25) or (angle > 15 and 2.5) or 3)
+			or angle / 90 / ((angle > 70 and 0.55 - ( (angle - 60) / 30 ) * 0.45) or (angle > 60 and 0.8 - ( (angle - 60) / 30 ) * 0.45) or (angle > 53 and 1) or (angle > 43 and 1.2) or (angle > 30 and 1.5) or 1.9)
+
+		local distance = (from - to).Magnitude
+		local height = yMult * distance
+
+		local t = getTimeForHeight(from, to, height)
+		local velocity = getVelocityForXYinTime(from, to, t)
+
+		return velocity, t
+	end
+
+	local function finalCalc(char, angle, xLead, yLead, sideways)	
+		xLead = xLead or 0
+
+		local IS_PLAYER = players:GetPlayerFromCharacter(char)
+		local moveDirection = IS_PLAYER and ((not sideways and Settings.QBAimbotExperimental and moveDirection[char]) or char.Humanoid.MoveDirection) or (char.Humanoid.WalkToPoint - char.HumanoidRootPart.Position).Unit
+		local _, t = getVelocityForAngle(player.Character.Head.Position, char.HumanoidRootPart.Position, angle, moveDirection.Magnitude <= 0)
+
+		local pos = char.Head.Position + (moveDirection * 20 * t) + (moveDirection * xLead) + (moveDirection * 20 * ping) + Vector3.new(0, yLead, 0)
+		
+		pos = Settings.QBAimbotAntiOOB and clamp_oobPosition(pos) or pos
+
+		return getVelocityForXYinTime(player.Character.Head.Position, pos, t), pos, t
+	end
+
+	local function checkIfInterceptable(position, time)
+		local blacklist = {}
+		local interceptable = false
+
+		blacklist[target.Name] = true
+
+		if player.Team then
+			for _, player in pairs(player.Team:GetPlayers()) do
+				blacklist[player.Name] = true
+			end
+		end
+
+		local targets = {}
+
+		for _, player in pairs(players:GetPlayers()) do
+			table.insert(targets, player.Character)
+		end
+
+		if IS_PRACTICE then
+			table.insert(targets, workspace.npcwr.a['bot 1'])
+			table.insert(targets, workspace.npcwr.a['bot 2'])
+			table.insert(targets, workspace.npcwr.b['bot 3'])
+			table.insert(targets, workspace.npcwr.b['bot 4'])
+		end
+
+		for _, character in pairs(targets) do
+			if blacklist[character.Name] then continue end
+			local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
+
+			if not humanoidRootPart then continue end
+
+			local distance = (humanoidRootPart.Position - position).Magnitude
+			local radius = (20 * time) + 7.5
+
+			interceptable = distance < radius
+			if interceptable then break end
+		end
+
+		return interceptable
+	end
+	
+	local function getPosInXTimeFromVel(initialPos, initialVelocity, gravity, time)
+		local position = initialPos + initialVelocity * time + 0.5 * gravity * time * time
+		return position
+	end
+
+	local function findRoute(character)
+		local isPlayer = players:GetPlayerFromCharacter(character)
+
+		local moveDirection = isPlayer and character.Humanoid.MoveDirection or (character.Humanoid.WalkToPoint - character.HumanoidRootPart.Position).Unit
+		local distance = (character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).Magnitude
+
+		local function isDiagonal()
+			local absMD = Vector3.new(math.abs(moveDirection.X), 0, math.abs(moveDirection.Z))
+			local diff = (absMD - Vector3.new(0.7, 0, 0.7)).Magnitude
+			return diff < 0.5
+		end
+
+		local function isSideways()
+			local direction = (character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).Unit
+			local highest = math.abs(direction.X) > math.abs(direction.Z) and "Z" or "X"
+			return math.abs(moveDirection[highest]) > 0.8
+		end
+
+		local function towardsQB()
+			local newDistance = ((character.HumanoidRootPart.Position + (moveDirection * 16)) - player.Character.HumanoidRootPart.Position).Magnitude
+			return (distance - newDistance) > 12
+		end
+
+		local requirements = {
+			["go"] = function()
+				return not isDiagonal() and not towardsQB()
+			end,
+			["post/corner"] = function()
+				return isDiagonal() and not towardsQB() and distance > 125
+			end,
+			["slant"] = function()
+				return isDiagonal() and not towardsQB() and distance <= 125
+			end,
+			["in/out"] = function()
+				return isSideways() and distance > 125
+			end,
+			["flat"] = function()
+				return isSideways() and distance <= 125
+			end,
+			["curl/comeback"] = function()
+				return towardsQB()
+			end,
+			["stationary"] = function()
+				return moveDirection.Magnitude <= 0
+			end,
+		}
+
+		local route = nil
+
+		for routeName, func in pairs(requirements) do
+			route = func() and routeName or route
+			if route then break end
+		end
+
+		return route
+	end
+
+	local function determineAutoAngle(distance, route)
+		local autoAngleFunc = {
+			["go"] = function()
+				return math.min(25 + (distance / 10), 40)
+			end,
+			["in/out"] = function()
+				return 10 + math.max((distance - 100), 0) / 10
+			end,
+			["flat"] = function()
+				return 10 + math.max((distance - 100), 0) / 10
+			end,
+			["curl/comeback"] = function()
+				return 7.5 + math.max((distance - 100), 0) / 20
+			end,
+			["stationary"] = function()
+				return 17 + math.max((distance - 100), 0) / 20
+			end,
+		}
+
+		return (autoAngleFunc[route] or autoAngleFunc.go)()
+	end
+
+	local function determine95PowerOnlyAngle(distance, route)
+		local IN_AIR = player.Character.Humanoid.FloorMaterial == Enum.Material.Air
+
+		local autoAngleFunc = {
+			["go"] = function()
+				return distance > 150 and math.max(IN_AIR and (16 + math.max(distance - 100, 0) / 5) or (14 + math.max(distance - 100, 0) / 5), 25)
+					or (IN_AIR and 16.5 + math.max(distance, 0) * (12.5 / 150) or 14 + math.max(distance, 0) * (12.5 / 150))
+			end,
+			["in/out"] = function()
+				return 10 + math.max((distance - 100), 0) / 10
+			end,
+			["flat"] = function()
+				return 10 + math.max((distance - 100), 0) / 10
+			end,
+			["curl/comeback"] = function()
+				return 7.5 + math.max((distance - 100), 0) / 20
+			end,
+			["stationary"] = function()
+				return 13.5 + math.max((distance - 100), 0) / 20
+			end,
+		}
+
+		return (autoAngleFunc[route] or autoAngleFunc.go)()
+	end
+	
+	local function determineAutoThrowType(route)
+		if not target then return end
+		
+		local IS_PLAYER = players:GetPlayerFromCharacter(target)
+		local dbDistance = math.huge
+		
+		for _, player in pairs(players:GetPlayers()) do
+			if IS_PLAYER and IS_PLAYER.Team and IS_PLAYER.Team == player.Team then continue end
+			if IS_PLAYER and player == IS_PLAYER then continue end
+			
+			local character = player.Character
+			local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
+			
+			if not humanoidRootPart then continue end
+			
+			local distance = (humanoidRootPart.Position - target.HumanoidRootPart.Position).Magnitude
+			
+			if distance < dbDistance then
+				dbDistance = distance
+			end
+		end
+		
+		local forwardRoutes = {"go", "post/corner", "slant", "curl/comeback", "stationary"}
+		local sidewayRoutes = {"in/out", "flat"}
+		
+		if within(forwardRoutes, route) then
+			if dbDistance > 5 then
+				return (Settings.QBAimbot95PowerOnly or angle < 40) and "Jump" or "Dime"
+			elseif dbDistance > 2 then
+				return "Dive" 
+			end
+			
+			return "Mag"
+		elseif within(sidewayRoutes, route) then
+			if dbDistance > 4 then
+				return "Dime"
+			end
+			
+			return "Jump"
+		end
+		
+		return "Dime"
+	end
+	
+	local function findClosestMultiple(x, y)
+		local m = math.round(y / x)
+		return m * x
+	end
+	
+	local function changePowerGui(power)
+		local ballGui = player.PlayerGui:FindFirstChild("BallGui")
+		if ballGui then
+			for _, frame in pairs(ballGui['Frame0']:GetChildren()) do
+				if frame.Name == "Disp" then continue end
+				frame.BackgroundTransparency = tonumber(frame.Name) <= power and 0 or 0.9
+			end
+		end
+		
+		ballGui['Frame0'].Disp.Text = power
+	end
+	
+	--// tracking
+	
+	task.spawn(function()
+		local moveDirectionData = {}
+
+		while true do task.wait(1/30);
+			for _, player in pairs(players:GetPlayers()) do
+				local character = player.Character
+				local humanoid = character and character:FindFirstChild("Humanoid")
+
+				if not humanoid then continue end
+
+				if not moveDirectionData[character] then
+					moveDirectionData[character] = {
+						Direction = humanoid.MoveDirection,
+						Started = os.clock()
+					}
+					moveDirection[character] = humanoid.MoveDirection
+				end
+				
+				local newMoveDirection = humanoid.MoveDirection
+				
+				if (newMoveDirection - moveDirectionData[character].Direction).Magnitude > 0.2 then
+					moveDirectionData[character] = {
+						Direction = humanoid.MoveDirection,
+						Started = os.clock()
+					}
+				else
+					if (os.clock() - moveDirectionData[character].Started) > 0.5 then
+						moveDirection[character] = humanoid.MoveDirection
+						moveDirectionData[character] = {
+							Direction = humanoid.MoveDirection,
+							Started = os.clock()
+						}
+					end
+				end
+			end
+		end
+	end)
+	
+	--// main
+
+	while true do task.wait();
+		local s, e = pcall(function()
+			cards.Enabled = Settings.QBAimbotUI and Settings.QBAimbot and (player.PlayerGui:FindFirstChild("BallGui") or workspace.CurrentCamera.CameraSubject:IsA("BasePart"))
+			beam.Enabled = Settings.QBAimbotVisualise and Settings.QBAimbot and (player.PlayerGui:FindFirstChild("BallGui") or workspace.CurrentCamera.CameraSubject:IsA("BasePart"))
+			highlight.Enabled = Settings.QBAimbotVisualise and Settings.QBAimbot and player.PlayerGui:FindFirstChild("BallGui")
+			
+			highlight.FillColor = locked and Color3.fromHex("#6a64a2") or Color3.fromRGB(255, 255, 255)
+			highlight.OutlineColor = locked and Color3.fromRGB(255, 255, 255) or Color3.fromHex("#6a64a2")
+
+			if not player.Character:FindFirstChild("Football") and player.PlayerGui:FindFirstChild("BallGui") then
+				player.PlayerGui:FindFirstChild("BallGui").Parent = nil
+			end
+
+			if not player.PlayerGui:FindFirstChild("BallGui") then firedRemoteEvent = false return end
+			if not Settings.QBAimbot then return end
+			if not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then return end
+
+			target = (locked and target) or findTarget()
+
+			if not target then return end
+			
+			if not target.Parent then locked = false return end
+			if not target:FindFirstChild("HumanoidRootPart") then locked = false return end
+
+			local IN_AIR = player.Character.Humanoid.FloorMaterial == Enum.Material.Air
+
+			local distance = (target.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).Magnitude
+			local route = findRoute(target)
+			
+			if Settings.QBAimbotAutoThrowType then
+				throwType = determineAutoThrowType(route)
+			end
+			
+			nonVisualThrowType = throwType == "Bullet" and (IN_AIR and "Jump" or "Dime") or nil
+			
+			local realThrowType = throwType
+			local throwType = nonVisualThrowType or throwType
+			
+			local QBAimbot95PowerOnly = realThrowType == "Bullet" and {
+				Value = true
+			} or Settings.QBAimbot95PowerOnly
+
+			local xLead = offsets[throwType].xLead or 0
+			local yLead = offsets[throwType].yLead or 0
+			
+			if QBAimbot95PowerOnly and throwType == "Jump" then
+				xLead += 3.5
+				yLead -= 1
+			end
+
+			if angle > 30 and QBAimbot95PowerOnly and route == "go" then
+				yLead -= 0.5 + math.min(angle - 30, 5) / 10
+			end
+
+			if within(sidewayRoutes, route) and IN_AIR then
+				yLead += 8
+				xLead += 3
+			end
+
+			if within(inAirAdditiveRoutes, route) and IN_AIR then
+				yLead += 4
+			end
+
+			xLead += offsets[throwType].routes[route].xzOffset or 0
+			yLead += offsets[throwType].routes[route].yOffset or 0
+
+			xLead += Settings.QBAimbotXOffset
+			yLead += Settings.QBAimbotYOffset
+
+			if IN_AIR and QBAimbot95PowerOnly then
+				yLead += 1
+			end
+
+			angle = (QBAimbot95PowerOnly and determine95PowerOnlyAngle(distance, route, target)) or (Settings.QBAimbotAutoAngle and determineAutoAngle(distance, route)) or angle
+
+			if (not Settings.QBAimbotAutoAngle and not QBAimbot95PowerOnly) and (angle % 5 ~= 0) then
+				angle = 45
+			end
+
+			local s, velocity, position, airtime = pcall(finalCalc, target, angle, xLead, yLead, table.find(sidewayRoutes, route))
+
+			if not s then
+				return
+			end
+
+			local isInterceptable = checkIfInterceptable(position, airtime)
+
+			power = math.min(math.round(velocity.Magnitude), 95)
+			direction = velocity.Unit
+			local curve0, curve1, cf1, cf2 = beamProjectile(Vector3.new(0, -28, 0), power * direction, player.Character.Head.Position + (direction * 5), airtime)
+			beam.CurveSize0 = curve0
+			beam.CurveSize1 = curve1
+			a0.CFrame = a0.Parent.CFrame:inverse() * cf1
+			a1.CFrame = a1.Parent.CFrame:inverse() * cf2
+
+			cards.Angle.Value.Text = math.round(angle * 10) / 10
+			cards.Player.Value.Text = target.Name
+			cards.Power.Value.Text = power
+			cards.Mode.Value.Text = realThrowType 
+			cards.Route.Value.Text = route
+
+			highlight.Parent = target
+			highlight.Adornee = target
+			
+			if Settings.QBAimbotAdjustPowerGUI then
+				changePowerGui(findClosestMultiple(5, power))
+			end
+		end);
+	end
+end)

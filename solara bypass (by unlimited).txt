@@ -1,0 +1,67 @@
+if not getgenv().BypassLoaded then
+    getgenv().BypassLoaded = true
+else
+    return warn("Already loaded bypass")
+end
+
+game.DescendantAdded:Connect(function(Object)
+    if Object.Name == "LocalScript" then
+        warn("AC Script: ", Object:GetFullName())
+        Object.Disabled = true
+        Object:Destroy()
+    end
+end)
+
+-- // Services
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+-- // Variables
+local Remote = ReplicatedStorage:WaitForChild("Remotes").CharacterSoundEvent
+
+local function __call(T, v1, v2, v3, v4, v5, v6)
+    warn(v1, v2, v3, v4, v5, v6)
+    if ((v1 and v1 ~= v2) and v2 ~= v3) then
+        T[math.round(((T[11] / 90) ^ (1 / 3) - 112) / -9) + 1] = T[math.floor(math.sqrt(v3 - 555))]
+        return T
+    end
+end
+
+local Handshake = setmetatable({
+    {},
+    math.random(1000000, 100000000),
+    math.random(1000000, 100000000),
+    math.random(1000000, 100000000),
+    math.random(1000000, 100000000),
+    math.random(1000000, 100000000),
+    math.random(1000000, 100000000),
+    math.random(1000000, 100000000),
+    math.random(1000000, 100000000),
+    math.random(1000000, 100000000),
+    math.random(1000000, 100000000),
+    math.random(1000000, 100000000),
+    math.random(1000000, 100000000),
+    math.random(1000000, 100000000),
+    math.random(1000000, 100000000),
+    math.random(1000000, 100000000),
+    math.random(1000000, 100000000),
+    math.random(1000000, 100000000),
+    newproxy(true)
+}, {__call = __call})
+
+Remote.OnClientEvent:Connect(function(Method, _, NewArgs)
+    if Method == "💱AC" then
+        if NewArgs then
+            for i = 1, #NewArgs do
+                Handshake[i + 1] = NewArgs[i]
+            end
+        end
+    end
+end)
+
+task.wait(4)
+
+task.spawn(function()
+    while task.wait(0.5) do
+        Remote:fireServer("💱AC", Handshake(887, 782, 780, 648, 659), nil)
+    end
+end)

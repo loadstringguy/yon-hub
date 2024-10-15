@@ -1,0 +1,30 @@
+local Players = game:GetService("Players")
+
+local LocalPlayer = Players.LocalPlayer
+
+local function OnCharacterAdded(Character)
+    local Humanoid = Character:WaitForChild("Humanoid")
+    local RootPart = Character:WaitForChild("HumanoidRootPart")
+
+    local Part = Instance.new("Part")
+    Part.CanCollide = false
+    Part.Position = RootPart.Position
+    Part.Transparency = 1
+    Part.Parent = workspace.Terrain
+
+    local WeldConstraint = Instance.new("WeldConstraint")
+    WeldConstraint.Part0 = Part
+    WeldConstraint.Part1 = RootPart
+    WeldConstraint.Parent = Part
+
+    local BodyForce = Instance.new("BodyForce")
+    BodyForce.Force = Vector3.new(0, 5000, 0)
+    BodyForce.Parent = Part
+
+    Humanoid.Died:Connect(function()
+        Part:Destroy()
+    end)
+end
+
+OnCharacterAdded(LocalPlayer.Character)
+LocalPlayer.CharacterAdded:Connect(OnCharacterAdded)

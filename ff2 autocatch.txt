@@ -1,0 +1,27 @@
+getgenv().AutoCatch = {
+    Enabled = true,
+    Distance = 15,
+}
+
+-- // Services //
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+local VirtualInputManager = game:GetService("VirtualInputManager")
+
+-- // Main Code //
+task.spawn(function()
+    if getgenv().AutoCatch.Enabled then
+        RunService.Heartbeat:Connect(function()
+            for _, v in pairs(workspace:GetChildren()) do
+                if v.Name == "Football" and v:IsA("BasePart") then
+                    local Distance = (v.Position - LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+                    if Distance <= getgenv().AutoCatch.Distance then
+                        VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.C, false, nil)
+                        VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.C, false, nil)
+                    end
+                end
+            end
+        end)
+    end
+end)
