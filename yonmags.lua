@@ -884,7 +884,7 @@ local values = replicatedStorage:FindFirstChild("Values")
 
 local lib = Library:NewWindow("sigmhack", "Search")
 
-local t1 = lib:NewTab("Catching")
+local t1 = lib:NewTab("Catching", "Canvas")
 
 local distance = 25
 
@@ -941,7 +941,7 @@ t1:NewToggle("View MS Hitbox", function(state)
     end)
 end)
 
-local t2 = lib:NewTab("Physics")
+local t2 = lib:NewTab("Physics","Canvas")
 
 t2:NewToggle("Quick TP", false, function(state)
     getgenv().tp = (state and true or false)
