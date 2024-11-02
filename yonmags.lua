@@ -900,6 +900,7 @@ t1:NewToggle("Magnets", false, function(state)
     end)
 end)
 
+
 t1:NewSlider("Magnets Distance", 0, 25, 5, function(v)
     distance = v
 end)
@@ -907,7 +908,7 @@ end)
 t1:NewToggle("View MS Hitbox", function(state)
     getfenv().mshitbox = (state and true or false)
 
-    local magnetEnabled = true
+    local magnetEnabled = state
     local hitboxSize = Vector3.new(25, 25, 25)
 
     local function createHitbox(target)
@@ -921,11 +922,13 @@ t1:NewToggle("View MS Hitbox", function(state)
         hitbox.Material = Enum.Material.ForceField
         hitbox.Name = "MagnetHitbox"
         hitbox.CFrame = target.CFrame
+        hitbox.CastShadow = false
         hitbox.Parent = target
 
         local function updateHitbox()
             while magnetEnabled and target and target.Parent do
-                hitbox.CFrame = target.CFrame
+                local offset = target.CFrame.LookVector * distance
+                hitbox.CFrame = target.CFrame + offset
                 task.wait()
             end
             hitbox:Destroy()
@@ -940,6 +943,7 @@ t1:NewToggle("View MS Hitbox", function(state)
         end
     end)
 end)
+
 
 local t2 = lib:NewTab("Physics", "Canvas")
 
