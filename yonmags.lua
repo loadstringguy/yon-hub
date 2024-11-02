@@ -905,7 +905,7 @@ t1:NewSlider("Magnets Distance", 0, 25, 5, function(v)
     distance = v
 end)
 
-t1:NewToggle("View MS Hitbox", function(state)
+t1:NewToggle("View MS Hitbox", false, function(state)
     getfenv().mshitbox = (state and true or false)
 
     local magnetEnabled = state
