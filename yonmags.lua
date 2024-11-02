@@ -873,6 +873,15 @@ local mouse = Player:GetMouse()
 local camera = workspace.CurrentCamera
 local values = replicatedStorage:FindFirstChild("Values")
 
+
+    local tab = {
+    Active = false,
+    Sizes = {
+        Reach = 3
+    }
+}
+
+
 local lib = Library:NewWindow("sigmhack", "Search")
 
 local t1 = Library:NewTab("Catching", "Default")
