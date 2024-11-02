@@ -932,7 +932,7 @@ t1:NewToggle("View MS Hitbox", function(state)
     end)
 end)
 
-local t2 = Library:NewWindow("physics")
+local t2 = lib:NewTab("physics")
 
 t2:NewToggle("Quick TP", false, function(state)
     getgenv().tp = (state and true or false)
@@ -1076,7 +1076,7 @@ t2:NewToggle("Ball Path Prediction", false, function(state)
     return Grapher
 end)
 
-example1:AddToggle("No Jump Cooldown", false, function(state)
+t2:NewToggle("No Jump Cooldown", false, function(state)
     getgenv().nojpcd = (state and true or false)
     
     local humanoid = player.Character and player.Character:FindFirstChild("Humanoid")
