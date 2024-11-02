@@ -973,7 +973,7 @@ end)
 
 t2:NewToggle("Ball Path Prediction", false, function(state)
     getgenv().pathpred = (state and true or false)
-    
+
     local Grapher = {}
 
     Grapher.Segment = Instance.new("Part")
@@ -991,7 +991,6 @@ t2:NewToggle("Ball Path Prediction", false, function(state)
     Grapher.CastStep = 3 / 60
     Grapher.LastSavedPower = 60
     Grapher.SegmentLifetime = 8
-    Grapher.VisualizerEnabled = true
 
     function Grapher:GetCollidables()
         local Collidables = {}
@@ -1037,7 +1036,7 @@ t2:NewToggle("Ball Path Prediction", false, function(state)
             highlight.FillTransparency = 0.7
         end
 
-        while Grapher.VisualizerEnabled do
+        while getgenv().pathpred do
             elapsed = elapsed + Grapher.CastStep
             local nextPos = origin + velocity * elapsed - Vector3.new(0, 0.5 * 28 * elapsed ^ 2, 0)
 
@@ -1066,12 +1065,20 @@ t2:NewToggle("Ball Path Prediction", false, function(state)
     end
 
     function Grapher:StartVisualizer()
+        getgenv().pathpred = true
         Grapher.VisualizerEnabled = true
     end
 
     function Grapher:StopVisualizer()
+        getgenv().pathpred = false
         Grapher.VisualizerEnabled = false
         Grapher:WipeMarkers()
+    end
+
+    if state then
+        Grapher:StartVisualizer()
+    else
+        Grapher:StopVisualizer()
     end
 
     workspace.ChildAdded:Connect(function(child)
@@ -1088,6 +1095,7 @@ t2:NewToggle("Ball Path Prediction", false, function(state)
 
     return Grapher
 end)
+
 
 t2:NewToggle("No Jump Cooldown", false, function(state)
     getgenv().nojpcd = (state and true or false)
