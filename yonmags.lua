@@ -941,7 +941,7 @@ t1:NewToggle("View MS Hitbox", function(state)
     end)
 end)
 
-local t2 = lib:NewTab("Physics","Canvas")
+local t2 = lib:NewTab("Physics", "Canvas")
 
 t2:NewToggle("Quick TP", false, function(state)
     getgenv().tp = (state and true or false)
