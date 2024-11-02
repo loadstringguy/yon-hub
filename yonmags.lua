@@ -95,7 +95,7 @@ TS:Create(SliderBackStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {Transpar
 TS:Create(LoaderText, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {TextTransparency = 0}):Play()
 TS:Create(SliderMain, TweenInfo.new(1.5, Enum.EasingStyle.Quad), {Size = UDim2.new(0,339,0,7)}):Play()
 TS:Create(SliderMain, TweenInfo.new(.2, Enum.EasingStyle.Quad), {BackgroundTransparency = 0}):Play() wait(1.5)
-LoaderText.Text = "Complete!"
+LoaderText.Text = "Successfully loaded!"
 
 wait(1)
 
@@ -875,7 +875,7 @@ local values = replicatedStorage:FindFirstChild("Values")
 
 local lib = Library:NewWindow("sigmhack", "Search")
 
-local t1 = Library:NewTab("catching")
+local t1 = Library:NewTab("Catching", "Default")
 
 local distance = 25
 
@@ -932,7 +932,7 @@ t1:NewToggle("View MS Hitbox", function(state)
     end)
 end)
 
-local t2 = lib:NewTab("physics")
+local t2 = lib:NewTab("Physics", "Default")
 
 t2:NewToggle("Quick TP", false, function(state)
     getgenv().tp = (state and true or false)
