@@ -877,7 +877,7 @@ local camera = workspace.CurrentCamera
 local values = replicatedStorage:FindFirstChild("Values")
 
 local lib = Library:NewWindow("sigmhack", "Search")
-local t1 = Library:NewTab("Catching", "Canvas")
+local t1 = lib:NewTab("Catching", "Canvas")
 
 
 local distance = 25
