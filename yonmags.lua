@@ -1198,16 +1198,17 @@ end)
 
 t2:NewToggle("Optimal Jump", false, function(state)
     getgenv().optimalJumpPredictions = (state and true or false)
-    task.spawn(function()
+
+    task.spawn(function(state)
         local initialVelocity = ball.AssemblyLinearVelocity
-        local optimalPosition = Vector3.zero
+        local optimalPosition = Vector3.new(0, 0, 0)
         local currentPosition = ball.Position
         local t = 0
 
         while getgenv().optimalJumpPredictions do
-            t += 0.05
-            initialVelocity += Vector3.new(0, -28 * 0.05, 0)
-            currentPosition += initialVelocity * 0.05
+            t = t + 0.05
+            initialVelocity = initialVelocity + Vector3.new(0, -28 * 0.05, 0)
+            currentPosition = currentPosition + initialVelocity * 0.05
 
             local raycastParams = RaycastParams.new()
             raycastParams.FilterDescendantsInstances = {workspace:FindFirstChild("Models")}
@@ -1230,17 +1231,20 @@ t2:NewToggle("Optimal Jump", false, function(state)
 
         local part = Instance.new("Part")
         part.Anchored = true
-        part.Material = Enum.Material.Neon
+        part.Material = Enum.Material.ForceField
         part.Size = Vector3.new(1.5, 1.5, 1.5)
         part.Position = optimalPosition
         part.CanCollide = false
         part.Shape = Enum.PartType.Ball
+        part.Color = Color3.fromRGB(0, 0, 255)
         part.Parent = workspace
 
         repeat task.wait() until ball.Parent ~= workspace
         part:Destroy()
     end)
 end)
+
+    
 
 t2:NewToggle("Block Extender", false, function(state)
     getgenv().bextend = (state and true or false)
