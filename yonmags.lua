@@ -938,7 +938,7 @@ t1:NewToggle("View Magnets Hitbox", false, function(state)
 end)
 
 
-local t2 = sigma:NewTab("Physics", "Canvas")
+local t2 = lib:NewTab("Physics", "Canvas")
 
 t2:NewToggle("Quick TP", false, function(state)
     getgenv().quicktp = (state and true or false)
