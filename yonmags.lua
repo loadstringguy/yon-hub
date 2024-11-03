@@ -950,106 +950,92 @@ end)
 
 local t2 = lib:NewTab("Physics", "Canvas")
 
-t2:NewToggle("Quick TP", false, function(state)
-    getgenv().tp = (state and true or false)
-    local quickTPEnabled = getgenv().tp
-    local tpDistance = 2
+local distance = 25
 
-    local function handleQuickTP()
-        if quickTPEnabled then
-            local character = player.Character
-            if character and character:FindFirstChild("HumanoidRootPart") then
-                local humanoidRootPart = character.HumanoidRootPart
-                humanoidRootPart.CFrame = humanoidRootPart.CFrame + humanoidRootPart.CFrame.LookVector * tpDistance
-            end
-        end
-    end
-
-    local function onInputBegan(input, gameProcessed)
-        if not gameProcessed and input.KeyCode == Enum.KeyCode.F then
-            handleQuickTP()
-        end
-    end
-	userInputService.InputBegan:Connect(onInputBegan)
+t1:NewSlider("Magnets Distance", 0, 25, 5, function(v)
+    distance = v
 end)
 
+
+
 t2:NewToggle("Mobile Quick TP Button", false, function(state)
-     getgenv().mobquickbutton = (state and true or false)
-		   local ScreenGui = Instance.new("ScreenGui")
-		   local TextButton = Instance.new("TextButton")
-		   local UICorner = Instance.new("UICorner")
+    getgenv().mobquickbutton = (state and true or false)
 
-		   ScreenGui.Parent = player:WaitForChild("PlayerGui")
-		   ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    if state then
+        local ScreenGui = Instance.new("ScreenGui")
+        local TextButton = Instance.new("TextButton")
+        local UICorner = Instance.new("UICorner")
 
-		   TextButton.Parent = ScreenGui
-		   TextButton.BackgroundColor3 = Color3.new(0.0588,0.0588,0.0588)
-		   TextButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		   TextButton.BorderSizePixel = 0
-		   TextButton.Position = UDim2.new(0.47683534, 0, 0.461152881, 0)
-		   TextButton.Size = UDim2.new(0, 65, 0, 62)
-		   TextButton.Font = Enum.Font.SourceSans
-		   TextButton.Text = "TP"
-		   TextButton.TextColor3 = Color3.new(0.8314,0.8314,0.8314)
-		   TextButton.TextSize = 17.000
+        ScreenGui.Parent = player:WaitForChild("PlayerGui")
+        ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-		   UICorner.Parent = TextButton
+        TextButton.Parent = ScreenGui
+        TextButton.BackgroundColor3 = Color3.new(0.0588, 0.0588, 0.0588)
+        TextButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+        TextButton.BorderSizePixel = 0
+        TextButton.Position = UDim2.new(0.47683534, 0, 0.461152881, 0)
+        TextButton.Size = UDim2.new(0, 65, 0, 62)
+        TextButton.Font = Enum.Font.SourceSans
+        TextButton.Text = "TP"
+        TextButton.TextColor3 = Color3.new(0.8314, 0.8314, 0.8314)
+        TextButton.TextSize = 17.000
 
-		 
-		   local function dragify(button)
-			   local dragging, dragInput, dragStart, startPos
+        UICorner.Parent = TextButton
 
-			   local function update(input)
-				   local delta = input.Position - dragStart
-				   button.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-			   end
+        local function dragify(button)
+            local dragging, dragInput, dragStart, startPos
 
-			   button.InputBegan:Connect(function(input)
-				   if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-					   dragging = true
-					   dragStart = input.Position
-					   startPos = button.Position
+            local function update(input)
+                local delta = input.Position - dragStart
+                button.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+            end
 
-					   input.Changed:Connect(function()
-						   if input.UserInputState == Enum.UserInputState.End then
-							   dragging = false
-						   end
-					   end)
-				   end
-			   end)
+            button.InputBegan:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                    dragging = true
+                    dragStart = input.Position
+                    startPos = button.Position
 
-			   button.InputChanged:Connect(function(input)
-				   if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-					   dragInput = input
-				   end
-			   end)
+                    input.Changed:Connect(function()
+                        if input.UserInputState == Enum.UserInputState.End then
+                            dragging = false
+                        end
+                    end)
+                end
+            end)
 
-			   userInputService.InputChanged:Connect(function(input)
-				   if dragging and input == dragInput then
-					   update(input)
-				   end
-			   end)
-		   end
+            button.InputChanged:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+                    dragInput = input
+                end
+            end)
 
-		   dragify(TextButton)
+            userInputService.InputChanged:Connect(function(input)
+                if dragging and input == dragInput then
+                    update(input)
+                end
+            end)
+        end
 
+        dragify(TextButton)
 
-			TextButton.MouseButton1Click:Connect(teleportForward)
-		else
+        local function teleportForward()
+            -- Define your teleport functionality here
+        end
 
-			local existingGui = player.PlayerGui:FindFirstChild("ScreenGui")
-			if existingGui then
-				existingGui:Destroy()
-			end
-		end
-	end
-	end,
-})
-end)()
+        TextButton.MouseButton1Click:Connect(teleportForward)
+    else
+        local existingGui = player.PlayerGui:FindFirstChild("ScreenGui")
+        if existingGui then
+            existingGui:Destroy()
+        end
+    end
+end)
 
 t1:NewSlider("Teleport Distance", 0, 5, 2, function(v)
     tpDistance = v
 end)
+
 
 t2:NewToggle("Ball Path Prediction", false, function(state)
     getgenv().pathpred = (state and true or false)
@@ -1262,7 +1248,7 @@ local Torso = Character and Character:FindFirstChild("Torso")
 local function updateBlockPart()
     local blockPart = getBlockPart()
     if blockPart then
-        if blockreachon then
+        if true then
             blockPart.Size = Vector3.new(bextend, bextend, bextend)
             blockPart.Transparency = bltransparency
         else
