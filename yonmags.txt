@@ -902,14 +902,14 @@ t1:NewToggle("View Magnets Hitbox", false, function(state)
     getfenv().mshitbox = (state and true or false)
 
     local magnetEnabled = state
-    local hitboxSize = Vector3.new(25, 25, 25)
+    local hitboxSize = Vector3.new(distance, distance, distance)
 
     local function createHitbox(target)
         if not target:IsA("BasePart") then return end
 
         local hitbox = Instance.new("Part")
         hitbox.Size = hitboxSize
-        hitbox.Transparency = 0.1
+        hitbox.Transparency = 0.05
         hitbox.Anchored = true
         hitbox.CanCollide = false
         hitbox.Material = Enum.Material.ForceField
@@ -1177,15 +1177,22 @@ end)
 
 t2:NewToggle("Block Extender", false, function(state)
     getgenv().bextend = (state and true or false)
-local blockPart = character and character:FindFirstChild("BlockPart")
-		
-if not blockPart then continue end
-			
-blockPart.Size = bextend and Vector3.new(bextend, bextend, bextend) or Vector3.new(0.75, 5, 1.5)
-blockPart.Transparency = blockExtender.Value and bltransparency or 1
-		end
-	end)	
-end
+
+    task.spawn(function()
+        while true do
+            local blockPart = character and character:FindFirstChild("BlockPart")
+            if not blockPart then
+                task.wait()
+                continue
+            end
+
+            blockPart.Size = bextend and Vector3.new(bextend, bextend, bextend) or Vector3.new(0.75, 5, 1.5)
+            blockPart.Transparency = state and bltransparency or 1
+
+            task.wait()
+        end
+    end)
+end)
 
 t2:NewSlider("Block Extender Distance", 0, 20, 5, function(v)
     bextend = v
