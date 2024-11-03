@@ -859,20 +859,21 @@ local debris = game:GetService("Debris")
 local contentProvider = game:GetService("ContentProvider")
 local scriptContext = game:GetService("ScriptContext")
 local players = game:GetService("Players")
+
 local tweenService = game:GetService("TweenService")
 local statsService = game:GetService("Stats")
 local runService = game:GetService("RunService")
 local userInputService = game:GetService("UserInputService")
+
 local replicatedStorage = game:GetService("ReplicatedStorage")
 local httpService = game:GetService("HttpService")
 local starterGui = game:GetService("StarterGui")
-local character = Player.Character or Player.CharacterAdded:Wait()
-local humanoid = character:FindFirstChildOfClass("Humanoid")
 
+local player = game:GetService("Players").LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 
-
-local Player = players.LocalPlayer
-local mouse = Player:GetMouse()
 local camera = workspace.CurrentCamera
 local values = replicatedStorage:FindFirstChild("Values")
 
@@ -1180,8 +1181,6 @@ end)
 t2:NewToggle("No Jump Cooldown", false, function(state)
     getgenv().nojpcd = (state and true or false)
     
-    local humanoid = player.Character and player.Character:FindFirstChild("Humanoid")
-    
     if not humanoid then
         player.CharacterAdded:Wait()
         humanoid = player.Character:FindFirstChild("Humanoid")
@@ -1194,7 +1193,7 @@ t2:NewToggle("No Jump Cooldown", false, function(state)
                 humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, true)
             end
         else
-            warn("Humanoid not found")
+            warn("not found")
         end
     else
         if humanoid then
