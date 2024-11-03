@@ -864,7 +864,6 @@ local tweenService = game:GetService("TweenService")
 local statsService = game:GetService("Stats")
 local runService = game:GetService("RunService")
 local userInputService = game:GetService("UserInputService")
-
 local replicatedStorage = game:GetService("ReplicatedStorage")
 local httpService = game:GetService("HttpService")
 local starterGui = game:GetService("StarterGui")
@@ -877,18 +876,9 @@ local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 local camera = workspace.CurrentCamera
 local values = replicatedStorage:FindFirstChild("Values")
 
-
-    local tab = {
-    Active = false,
-    Sizes = {
-        Reach = 3
-    }
-}
-
-
 local lib = Library:NewWindow("sigmhack", "Search")
+local t1 = Library:NewTab("Catching", "Canvas")
 
-local t1 = lib:NewTab("Catching", "Canvas")
 
 local distance = 25
 
@@ -903,7 +893,6 @@ t1:NewToggle("Magnets", false, function(state)
         end
     end)
 end)
-
 
 t1:NewSlider("Magnets Distance", 0, 25, 5, function(v)
     distance = v
@@ -949,10 +938,11 @@ t1:NewToggle("View Magnets Hitbox", false, function(state)
 end)
 
 
-local t2 = lib:NewTab("Physics", "Canvas")
+local t2 = sigma:NewTab("Physics", "Canvas")
+
 t2:NewToggle("Quick TP", false, function(state)
-getgenv().quicktp = (state and true or false)
-    local quickTPEnabled = getgenv().tp
+    getgenv().quicktp = (state and true or false)
+    local quickTPEnabled = getgenv().quicktp
     local tpDistance = 2
 
     local function handleQuickTP()
@@ -970,8 +960,9 @@ getgenv().quicktp = (state and true or false)
             handleQuickTP()
         end
     end
-	userInputService.InputBegan:Connect(onInputBegan)
-end)    
+
+    userInputService.InputBegan:Connect(onInputBegan)
+end)
 
 t2:NewToggle("Mobile Quick TP Button", false, function(state)
     getgenv().mobquickbutton = (state and true or false)
@@ -1052,12 +1043,9 @@ t2:NewToggle("Mobile Quick TP Button", false, function(state)
     end
 end)
 
-
-
 t2:NewSlider("Teleport Distance", 0, 5, 2, function(v)
     tpDistance = v
 end)
-
 
 t2:NewToggle("Ball Path Prediction", false, function(state)
     getgenv().pathpred = (state and true or false)
@@ -1184,10 +1172,9 @@ t2:NewToggle("Ball Path Prediction", false, function(state)
     return Grapher
 end)
 
-
 t2:NewToggle("No Jump Cooldown", false, function(state)
     getgenv().nojpcd = (state and true or false)
-    
+
     if not humanoid then
         player.CharacterAdded:Wait()
         humanoid = player.Character:FindFirstChild("Humanoid")
@@ -1200,7 +1187,7 @@ t2:NewToggle("No Jump Cooldown", false, function(state)
                 humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, true)
             end
         else
-            warn("not found")
+            warn("Humanoid not found")
         end
     else
         if humanoid then
@@ -1209,52 +1196,51 @@ t2:NewToggle("No Jump Cooldown", false, function(state)
     end
 end)
 
-
 t2:NewToggle("Optimal Jump", false, function(state)
     getgenv().optimalJumpPredictions = (state and true or false)
-task.spawn(function(state)
-    local initialVelocity = ball.AssemblyLinearVelocity
-    local optimalPosition = Vector3.zero
-    local currentPosition = ball.Position
-    local t = 0
+    task.spawn(function()
+        local initialVelocity = ball.AssemblyLinearVelocity
+        local optimalPosition = Vector3.zero
+        local currentPosition = ball.Position
+        local t = 0
 
-    while getgenv().optimalJumpPredictions do
-        t += 0.05
-        initialVelocity += Vector3.new(0, -28 * 0.05, 0)
-        currentPosition += initialVelocity * 0.05
+        while getgenv().optimalJumpPredictions do
+            t += 0.05
+            initialVelocity += Vector3.new(0, -28 * 0.05, 0)
+            currentPosition += initialVelocity * 0.05
 
-        local raycastParams = RaycastParams.new()
-        raycastParams.FilterDescendantsInstances = {workspace:FindFirstChild("Models")}
-        raycastParams.FilterType = Enum.RaycastFilterType.Include
+            local raycastParams = RaycastParams.new()
+            raycastParams.FilterDescendantsInstances = {workspace:FindFirstChild("Models")}
+            raycastParams.FilterType = Enum.RaycastFilterType.Include
 
-        local rayLength = optimalJumpType.Value == "Jump" and -13 or -15
-        local ray = workspace:Raycast(currentPosition, Vector3.new(0, rayLength, 0), raycastParams)
-        local antiCrashRay = workspace:Raycast(currentPosition, Vector3.new(0, -500, 0), raycastParams)
+            local rayLength = optimalJumpType.Value == "Jump" and -13 or -15
+            local ray = workspace:Raycast(currentPosition, Vector3.new(0, rayLength, 0), raycastParams)
+            local antiCrashRay = workspace:Raycast(currentPosition, Vector3.new(0, -500, 0), raycastParams)
 
-        if ray and t > 0.75 then
-            optimalPosition = ray.Position + Vector3.new(0, 2, 0)
-            break
+            if ray and t > 0.75 then
+                optimalPosition = ray.Position + Vector3.new(0, 2, 0)
+                break
+            end
+
+            if not antiCrashRay then
+                optimalPosition = currentPosition
+                break
+            end
         end
 
-        if not antiCrashRay then
-            optimalPosition = currentPosition
-            break
-        end
-    end
+        local part = Instance.new("Part")
+        part.Anchored = true
+        part.Material = Enum.Material.Neon
+        part.Size = Vector3.new(1.5, 1.5, 1.5)
+        part.Position = optimalPosition
+        part.CanCollide = false
+        part.Shape = Enum.PartType.Ball
+        part.Parent = workspace
 
-    local part = Instance.new("Part")
-    part.Anchored = true
-    part.Material = Enum.Material.Neon
-    part.Size = Vector3.new(1.5, 1.5, 1.5)
-    part.Position = optimalPosition
-    part.CanCollide = false
-    part.Shape = Enum.PartType.Ball
-    part.Parent = workspace
-
-    repeat task.wait() until ball.Parent ~= workspace
-    part:Destroy()
+        repeat task.wait() until ball.Parent ~= workspace
+        part:Destroy()
+    end)
 end)
-		
 
 t2:NewToggle("Block Extender", false, function(state)
     getgenv().bextend = (state and true or false)
