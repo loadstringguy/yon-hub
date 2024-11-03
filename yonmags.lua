@@ -1267,7 +1267,7 @@ local function updateBlockPart()
             blockPart.Transparency = bltransparency
         else
             blockPart.Size = Vector3.new(0.75, 5, 1.5)
-			blockPart.Transparency = 1
+			blockPart.bltransparency = 1
         end
     end
 end
@@ -1291,3 +1291,6 @@ t2:NewSlider("Block Extender Distance", 0, 20, 5, function(v)
     bextend = v
 end)
 
+t2:NewSlider("Block Extender Transparency", 0, 1, 0.5, function(v)
+    bltransparency = v
+end)
