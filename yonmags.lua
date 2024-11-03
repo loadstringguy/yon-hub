@@ -994,6 +994,7 @@ t2:NewToggle("Mobile Quick TP Button", false, function(state)
         TextButton.Text = "TP"
         TextButton.TextColor3 = Color3.new(0.8314, 0.8314, 0.8314)
         TextButton.TextSize = 17.000
+        TextButton.BackgroundTransparency = 0.76
 
         UICorner.Parent = TextButton
 
@@ -1035,7 +1036,11 @@ t2:NewToggle("Mobile Quick TP Button", false, function(state)
         dragify(TextButton)
 
         local function teleportForward()
-            -- Define your teleport functionality here
+            local character = player.Character
+            if character and character:FindFirstChild("HumanoidRootPart") then
+                local humanoidRootPart = character.HumanoidRootPart
+                humanoidRootPart.CFrame = humanoidRootPart.CFrame + humanoidRootPart.CFrame.LookVector * tpDistance
+            end
         end
 
         TextButton.MouseButton1Click:Connect(teleportForward)
@@ -1047,7 +1052,8 @@ t2:NewToggle("Mobile Quick TP Button", false, function(state)
     end
 end)
 
-t1:NewSlider("Teleport Distance", 0, 5, 2, function(v)
+
+t2:NewSlider("Teleport Distance", 0, 5, 2, function(v)
     tpDistance = v
 end)
 
@@ -1206,49 +1212,48 @@ end)
 
 t2:NewToggle("Optimal Jump", false, function(state)
     getgenv().optimalJumpPredictions = (state and true or false)
+task.spawn(function()
+    local initialVelocity = ball.AssemblyLinearVelocity
+    local optimalPosition = Vector3.zero
+    local currentPosition = ball.Position
+    local t = 0
 
-    task.spawn(function()
-        local initialVelocity = ball.AssemblyLinearVelocity
-        local optimalPosition = Vector3.zero
-        local currentPosition = ball.Position
-        local t = 0
+    while getgenv().opju do
+        t += 0.05
+        initialVelocity += Vector3.new(0, -28 * 0.05, 0)
+        currentPosition += initialVelocity * 0.05
 
-        while getgenv().opju do
-            t += 0.05
-            initialVelocity += Vector3.new(0, -28 * 0.05, 0)
-            currentPosition += initialVelocity * 0.05
-            
-            local raycastParams = RaycastParams.new()
-            raycastParams.FilterDescendantsInstances = {workspace:FindFirstChild("Models")}
-            raycastParams.FilterType = Enum.RaycastFilterType.Include
+        local raycastParams = RaycastParams.new()
+        raycastParams.FilterDescendantsInstances = {workspace:FindFirstChild("Models")}
+        raycastParams.FilterType = Enum.RaycastFilterType.Include
 
-            local ray = workspace:Raycast(currentPosition, Vector3.new(0, optimalJumpType.Value == "Jump" and -13 or -15, 0), raycastParams)
-            local antiCrashRay = workspace:Raycast(currentPosition, Vector3.new(0, -500, 0), raycastParams)
+        local ray = workspace:Raycast(currentPosition, Vector3.new(0, optimalJumpType.Value == "Jump" and -13 or -15, 0), raycastParams)
+        local antiCrashRay = workspace:Raycast(currentPosition, Vector3.new(0, -500, 0), raycastParams)
 
-            if ray and t > 0.75 then
-                optimalPosition = ray.Position + Vector3.new(0, 2, 0)
-                break
-            end
-
-            if not antiCrashRay then
-                optimalPosition = currentPosition
-                break
-            end
+        if ray and t > 0.75 then
+            optimalPosition = ray.Position + Vector3.new(0, 2, 0)
+            break
         end
 
-        local part = Instance.new("Part")
-        part.Anchored = true
-        part.Material = Enum.Material.Neon
-        part.Size = Vector3.new(1.5, 1.5, 1.5)
-        part.Position = optimalPosition
-        part.CanCollide = false
-        part.Shape = Enum.PartType.Ball
-        part.Parent = workspace
+        if not antiCrashRay then
+            optimalPosition = currentPosition
+            break
+        end
+    end
 
-        repeat task.wait() until ball.Parent ~= workspace
-        part:Destroy()
-    end)
+    local part = Instance.new("Part")
+    part.Anchored = true
+    part.Material = Enum.Material.Neon
+    part.Size = Vector3.new(1.5, 1.5, 1.5)
+    part.Position = optimalPosition
+    part.CanCollide = false
+    part.Shape = Enum.PartType.Ball
+    part.Parent = workspace
+
+    repeat task.wait() until ball.Parent ~= workspace
+    part:Destroy()
 end)
+
 
 
 
@@ -1262,7 +1267,7 @@ t2:NewToggle("Block Extender", false, function(state)
 
     local function updateBlockPart()
         local blockPart = getBlockPart()
-        if blockPart then
+        if true then
             blockPart.Size = Vector3.new(bextend, bextend, bextend)
             blockPart.Transparency = bltransparency
         else
