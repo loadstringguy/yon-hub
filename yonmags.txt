@@ -876,38 +876,6 @@ local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 local camera = workspace.CurrentCamera
 local values = replicatedStorage:FindFirstChild("Values")
 
-function beamProjectile(g, v0, x0, t1)
-	local c = 0.5*0.5*0.5;
-	local p3 = 0.5*g*t1*t1 + v0*t1 + x0;
-	local p2 = p3 - (g*t1*t1 + v0*t1)/3;
-	local p1 = (c*g*t1*t1 + 0.5*v0*t1 + x0 - c*(x0+p3))/(3*c) - p2;
-
-	local curve0 = (p1 - x0).magnitude;
-	local curve1 = (p2 - p3).magnitude;
-
-	local b = (x0 - p3).unit;
-	local r1 = (p1 - x0).unit;
-	local u1 = r1:Cross(b).unit;
-	local r2 = (p2 - p3).unit;
-	local u2 = r2:Cross(b).unit;
-	b = u1:Cross(r1).unit;
-
-	local cf1 = CFrame.new(
-		x0.x, x0.y, x0.z,
-		r1.x, u1.x, b.x,
-		r1.y, u1.y, b.y,
-		r1.z, u1.z, b.z
-	)
-
-	local cf2 = CFrame.new(
-		p3.x, p3.y, p3.z,
-		r2.x, u2.x, b.x,
-		r2.y, u2.y, b.y,
-		r2.z, u2.z, b.z
-	)
-
-	return curve0, -curve1, cf1, cf2;
-end
 
 local lib = Library:NewWindow("sigmhack", "Search")
 local t1 = lib:NewTab("Catching", "Canvas")
@@ -1080,11 +1048,46 @@ t2:NewSlider("Teleport Distance", 0, 5, 2, function(v)
     tpDistance = v
 end)
 
+local ball = findClosestBall() if not ball then continue end
+
+function beamProjectile(g, v0, x0, t1)
+    local c = 0.5 * 0.5 * 0.5
+    local p3 = 0.5 * g * t1 * t1 + v0 * t1 + x0
+    local p2 = p3 - (g * t1 * t1 + v0 * t1) / 3
+    local p1 = (c * g * t1 * t1 + 0.5 * v0 * t1 + x0 - c * (x0 + p3)) / (3 * c) - p2
+
+    local curve0 = (p1 - x0).magnitude
+    local curve1 = (p2 - p3).magnitude
+
+    local b = (x0 - p3).unit
+    local r1 = (p1 - x0).unit
+    local u1 = r1:Cross(b).unit
+    local r2 = (p2 - p3).unit
+    local u2 = r2:Cross(b).unit
+    b = u1:Cross(r1).unit
+
+    local cf1 = CFrame.new(
+        x0.x, x0.y, x0.z,
+        r1.x, u1.x, b.x,
+        r1.y, u1.y, b.y,
+        r1.z, u1.z, b.z
+    )
+
+    local cf2 = CFrame.new(
+        p3.x, p3.y, p3.z,
+        r2.x, u2.x, b.x,
+        r2.y, u2.y, b.y,
+        r2.z, u2.z, b.z
+    )
+
+    return curve0, -curve1, cf1, cf2
+end
+
 t2:NewToggle("Ball Path Prediction", false, function(state)
     getgenv().ballPrediction = (state and true or false)
-local ball = findClosestBall() if not ball then continue end
-    task.spawn(function(state)
-            local initialVelocity = ball.AssemblyLinearVelocity
+
+
+            local initialVelocity = football.AssemblyLinearVelocity
             local a0, a1 = Instance.new("Attachment"), Instance.new("Attachment")
             a0.Parent = workspace.Terrain
             a1.Parent = workspace.Terrain
@@ -1096,27 +1099,25 @@ local ball = findClosestBall() if not ball then continue end
             beam.Width0 = 0.5
             beam.Width1 = 0.5
             beam.Transparency = NumberSequence.new(0)
-            beam.Color = ColorSequence.new(Color3.new(1, 1, 1)) 
+            beam.Color = ColorSequence.new(Color3.new(1, 1, 1))
 
             local g = Vector3.new(0, -28, 0)
-            local x0 = football.Position
+            local x0 = ball.Position
             local v0 = initialVelocity
 
             local curve0, curve1, cf1, cf2 = beamProjectile(g, v0, x0, 5)
 
             beam.CurveSize0 = curve0
             beam.CurveSize1 = curve1
-            a0.CFrame = a0.Parent.CFrame:inverse() * cf1
-            a1.CFrame = a1.Parent.CFrame:inverse() * cf2
+            a0.CFrame = a0.Parent.CFrame:Inverse() * cf1
+            a1.CFrame = a1.Parent.CFrame:Inverse() * cf2
 
-            repeat task.wait() until football.Parent ~= workspace
+            repeat task.wait() until ball.Parent ~= workspace
 
             beam:Destroy()
         end
     end)
 end)
-
-   
 
 		
 t2:NewToggle("No Jump Cooldown", false, function(state)
@@ -1147,8 +1148,6 @@ t2:NewToggle("Optimal Jump", false, function(state)
     getgenv().optimalJumpPredictions = (state and true or false)
 
     task.spawn(function()
-        
-        if not getgenv().optimalJumpPredictions then return end
 
         local initialVelocity = ball.AssemblyLinearVelocity
         local optimalPosition = Vector3.new(0, 0, 0)
