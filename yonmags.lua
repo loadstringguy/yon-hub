@@ -866,7 +866,7 @@ local userInputService = game:GetService("UserInputService")
 local replicatedStorage = game:GetService("ReplicatedStorage")
 local httpService = game:GetService("HttpService")
 local starterGui = game:GetService("StarterGui")
-local character = player.Character or player.CharacterAdded:Wait()
+local character = Player.Character or Player.CharacterAdded:Wait()
 local humanoid = character:FindFirstChildOfClass("Humanoid")
 
 
