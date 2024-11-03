@@ -1258,6 +1258,7 @@ end)
 
 t2:NewToggle("Block Extender", false, function(state)
     getgenv().bextend = (state and true or false)
+
     local function getBlockPart()
         return Character:FindFirstChild("BlockPart")
     end
@@ -1266,7 +1267,7 @@ t2:NewToggle("Block Extender", false, function(state)
 
     local function updateBlockPart()
         local blockPart = getBlockPart()
-        if true then
+        if state then
             blockPart.Size = Vector3.new(bextend, bextend, bextend)
             blockPart.Transparency = bltransparency
         else
