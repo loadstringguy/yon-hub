@@ -1209,16 +1209,15 @@ t2:NewToggle("No Jump Cooldown", false, function(state)
 end)
 
 
-
 t2:NewToggle("Optimal Jump", false, function(state)
     getgenv().optimalJumpPredictions = (state and true or false)
-task.spawn(function()
+task.spawn(function(state)
     local initialVelocity = ball.AssemblyLinearVelocity
     local optimalPosition = Vector3.zero
     local currentPosition = ball.Position
     local t = 0
 
-    while getgenv().opju do
+    while getgenv().optimalJumpPredictions do
         t += 0.05
         initialVelocity += Vector3.new(0, -28 * 0.05, 0)
         currentPosition += initialVelocity * 0.05
@@ -1227,7 +1226,8 @@ task.spawn(function()
         raycastParams.FilterDescendantsInstances = {workspace:FindFirstChild("Models")}
         raycastParams.FilterType = Enum.RaycastFilterType.Include
 
-        local ray = workspace:Raycast(currentPosition, Vector3.new(0, optimalJumpType.Value == "Jump" and -13 or -15, 0), raycastParams)
+        local rayLength = optimalJumpType.Value == "Jump" and -13 or -15
+        local ray = workspace:Raycast(currentPosition, Vector3.new(0, rayLength, 0), raycastParams)
         local antiCrashRay = workspace:Raycast(currentPosition, Vector3.new(0, -500, 0), raycastParams)
 
         if ray and t > 0.75 then
@@ -1253,9 +1253,7 @@ task.spawn(function()
     repeat task.wait() until ball.Parent ~= workspace
     part:Destroy()
 end)
-
-
-
+		
 
 t2:NewToggle("Block Extender", false, function(state)
     getgenv().bextend = (state and true or false)
