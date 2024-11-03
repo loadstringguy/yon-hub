@@ -949,14 +949,28 @@ end)
 
 
 local t2 = lib:NewTab("Physics", "Canvas")
+t2:NewToggle("Quick TP", false, function(state)
+getgenv().quicktp = (state and true or false)
+    local quickTPEnabled = getgenv().tp
+    local tpDistance = 2
 
-local distance = 25
+    local function handleQuickTP()
+        if quickTPEnabled then
+            local character = player.Character
+            if character and character:FindFirstChild("HumanoidRootPart") then
+                local humanoidRootPart = character.HumanoidRootPart
+                humanoidRootPart.CFrame = humanoidRootPart.CFrame + humanoidRootPart.CFrame.LookVector * tpDistance
+            end
+        end
+    end
 
-t1:NewSlider("Magnets Distance", 0, 25, 5, function(v)
-    distance = v
-end)
-
-
+    local function onInputBegan(input, gameProcessed)
+        if not gameProcessed and input.KeyCode == Enum.KeyCode.F then
+            handleQuickTP()
+        end
+    end
+	userInputService.InputBegan:Connect(onInputBegan)
+end)    
 
 t2:NewToggle("Mobile Quick TP Button", false, function(state)
     getgenv().mobquickbutton = (state and true or false)
@@ -1237,40 +1251,32 @@ t2:NewToggle("Optimal Jump", false, function(state)
     end)
 end)
 
+
+
 t2:NewToggle("Block Extender", false, function(state)
-getgenv().bextend = (state and true or false)
-local function getBlockPart()
-    return Character:FindFirstChild("BlockPart")
-end
+    getgenv().bextend = (state and true or false)
+    local function getBlockPart()
+        return Character:FindFirstChild("BlockPart")
+    end
 
-local Torso = Character and Character:FindFirstChild("Torso")
+    local Torso = Character and Character:FindFirstChild("Torso")
 
-local function updateBlockPart()
-    local blockPart = getBlockPart()
-    if blockPart then
-        if true then
+    local function updateBlockPart()
+        local blockPart = getBlockPart()
+        if blockPart then
             blockPart.Size = Vector3.new(bextend, bextend, bextend)
             blockPart.Transparency = bltransparency
         else
             blockPart.Size = Vector3.new(0.75, 5, 1.5)
-			blockPart.bltransparency = 1
+            blockPart.Transparency = 1
         end
     end
-end
 
-
-task.spawn(function()
-    while task.wait() do
-        updateBlockPart()
-    end
-end)
-
-
-
-task.spawn(function()
-    while task.wait() do
-        updateBlockPart()
-    end
+    task.spawn(function()
+        while task.wait() do
+            updateBlockPart()
+        end
+    end)
 end)
 
 t2:NewSlider("Block Extender Distance", 0, 20, 5, function(v)
