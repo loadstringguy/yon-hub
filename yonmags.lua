@@ -1048,130 +1048,51 @@ t2:NewSlider("Teleport Distance", 0, 5, 2, function(v)
 end)
 
 t2:NewToggle("Ball Path Prediction", false, function(state)
-    getgenv().pathpred = (state and true or false)
+    getgenv().beamPrediction = (state and true or false)
 
-    local Grapher = {}
-
-    Grapher.Segment = Instance.new("Part")
-    Grapher.Segment.Anchored = true
-    Grapher.Segment.Transparency = 0.3
-    Grapher.Segment.Material = Enum.Material.Neon
-    Grapher.Segment.CanCollide = false
-    Grapher.Segment.Size = Vector3.new(0.2, 0.2, 0.2)
-    Grapher.Segment.Name = "BeamSegment"
-
-    Grapher.Params = RaycastParams.new()
-    Grapher.Params.IgnoreWater = true
-    Grapher.Params.FilterType = Enum.RaycastFilterType.Whitelist
-
-    Grapher.CastStep = 3 / 60
-    Grapher.LastSavedPower = 60
-    Grapher.SegmentLifetime = 8
-
-    function Grapher:GetCollidables()
-        local Collidables = {}
-
-        for _, part in ipairs(workspace:GetDescendants()) do
-            if part:IsA("BasePart") and part.CanCollide == true then
-                table.insert(Collidables, part)
-            end
-        end
-        return Collidables
-    end
-
-    function Grapher:WipeMarkers()
-        for _, obj in pairs(workspace:GetChildren()) do
-            if obj.Name == "BeamSegment" then
-                obj:Destroy()
-            end
-        end
-    end
-
-    function Grapher:GetLanding(origin, velocity, target)
-        local elapsed = 0
-        local prevPos = origin
-
-        self.Params.FilterDescendantsInstances = self:GetCollidables()
-
-        local highlight = nil
-
-        if target then
-            for _, existing in ipairs(game.CoreGui:GetChildren()) do
-                if existing:IsA("Highlight") and existing.Adornee == target then
-                    wait(4)
-                    existing:Destroy()
-                end
+    task.spawn(function()
+        while getgenv().beamPrediction do
+            local football = workspace:FindFirstChild("Football")
+            if not football then
+                warn("Football not found in the workspace")
+                return
             end
 
-            highlight = Instance.new("Highlight", game.CoreGui)
-            highlight.Adornee = target
-            highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-            highlight.Enabled = true
-            highlight.OutlineColor = Grapher.Segment.Color
-            highlight.OutlineTransparency = Grapher.Segment.Transparency
-            highlight.FillTransparency = 0.7
-        end
+            local initialVelocity = football.AssemblyLinearVelocity
+            local a0, a1 = Instance.new("Attachment"), Instance.new("Attachment")
+            a0.Parent = workspace.Terrain
+            a1.Parent = workspace.Terrain
 
-        while getgenv().pathpred do
-            elapsed = elapsed + Grapher.CastStep
-            local nextPos = origin + velocity * elapsed - Vector3.new(0, 0.5 * 28 * elapsed ^ 2, 0)
+            local beam = Instance.new("Beam", workspace.Terrain)
+            beam.Attachment0 = a0
+            beam.Attachment1 = a1
+            beam.Segments = 500
+            beam.Width0 = 0.5
+            beam.Width1 = 0.5
+            beam.Transparency = NumberSequence.new(0)
+            beam.Color = ColorSequence.new(Color3.new(1, 1, 1)) 
 
-            local segment = self.Segment:Clone()
-            segment.Position = (prevPos + nextPos) / 2
-            segment.Size = Vector3.new(0.2, 0.2, (prevPos - nextPos).magnitude)
-            segment.CFrame = CFrame.new(prevPos, nextPos) * CFrame.new(0, 0, -segment.Size.Z / 2)
-            segment.Parent = workspace
+            local g = Vector3.new(0, -28, 0)
+            local x0 = football.Position
+            local v0 = initialVelocity
 
-            task.delay(Grapher.SegmentLifetime, function()
-                if segment and segment.Parent then
-                    segment:Destroy()
-                end
-            end)
+            local curve0, curve1, cf1, cf2 = beamProjectile(g, v0, x0, 5)
 
-            prevPos = nextPos
+            beam.CurveSize0 = curve0
+            beam.CurveSize1 = curve1
+            a0.CFrame = a0.Parent.CFrame:inverse() * cf1
+            a1.CFrame = a1.Parent.CFrame:inverse() * cf2
 
-            if target and highlight and (target.Parent ~= workspace or not target:FindFirstChildOfClass("BodyForce")) then
-                highlight:Destroy()
-                self:WipeMarkers()
-                break
-            end
+            repeat task.wait() until football.Parent ~= workspace
 
-            task.wait()
-        end
-    end
-
-    function Grapher:StartVisualizer()
-        getgenv().pathpred = true
-        Grapher.VisualizerEnabled = true
-    end
-
-    function Grapher:StopVisualizer()
-        getgenv().pathpred = false
-        Grapher.VisualizerEnabled = false
-        Grapher:WipeMarkers()
-    end
-
-    if state then
-        Grapher:StartVisualizer()
-    else
-        Grapher:StopVisualizer()
-    end
-
-    workspace.ChildAdded:Connect(function(child)
-        if child.Name == "Football" and child:IsA("BasePart") then
-            local connection
-            connection = child:GetPropertyChangedSignal("Velocity"):Connect(function()
-                if Grapher.VisualizerEnabled then
-                    Grapher:GetLanding(child.Position, child.Velocity, child)
-                end
-                connection:Disconnect()
-            end)
+            beam:Destroy()
         end
     end)
-
-    return Grapher
 end)
 
+   
+
+		
 t2:NewToggle("No Jump Cooldown", false, function(state)
     getgenv().nojpcd = (state and true or false)
 
@@ -1200,78 +1121,71 @@ t2:NewToggle("Optimal Jump", false, function(state)
     getgenv().optimalJumpPredictions = (state and true or false)
 
     task.spawn(function(state)
-        local initialVelocity = ball.AssemblyLinearVelocity
-        local optimalPosition = Vector3.new(0, 0, 0)
-        local currentPosition = ball.Position
-        local t = 0
-
         while getgenv().optimalJumpPredictions do
-            t = t + 0.05
-            initialVelocity = initialVelocity + Vector3.new(0, -28 * 0.05, 0)
-            currentPosition = currentPosition + initialVelocity * 0.05
-
-            local raycastParams = RaycastParams.new()
-            raycastParams.FilterDescendantsInstances = {workspace:FindFirstChild("Models")}
-            raycastParams.FilterType = Enum.RaycastFilterType.Include
-
-            local rayLength = optimalJumpType.Value == "Jump" and -13 or -15
-            local ray = workspace:Raycast(currentPosition, Vector3.new(0, rayLength, 0), raycastParams)
-            local antiCrashRay = workspace:Raycast(currentPosition, Vector3.new(0, -500, 0), raycastParams)
-
-            if ray and t > 0.75 then
-                optimalPosition = ray.Position + Vector3.new(0, 2, 0)
-                break
+            local football = workspace:FindFirstChild("Football")
+            if not football then
+                warn("not found")
+                return
             end
 
-            if not antiCrashRay then
-                optimalPosition = currentPosition
-                break
+            local initialVelocity = football.AssemblyLinearVelocity
+            local optimalPosition = Vector3.new(0, 0, 0)
+            local currentPosition = football.Position
+            local t = 0
+
+            while getgenv().optimalJumpPredictions do
+                t = t + 0.05
+                initialVelocity = initialVelocity + Vector3.new(0, -28 * 0.05, 0)
+                currentPosition = currentPosition + initialVelocity * 0.05
+
+                local raycastParams = RaycastParams.new()
+                raycastParams.FilterDescendantsInstances = {workspace:FindFirstChild("Models")}
+                raycastParams.FilterType = Enum.RaycastFilterType.Include
+
+                local rayLength = optimalJumpType.Value == "Jump" and -13 or -15
+                local ray = workspace:Raycast(currentPosition, Vector3.new(0, rayLength, 0), raycastParams)
+                local antiCrashRay = workspace:Raycast(currentPosition, Vector3.new(0, -500, 0), raycastParams)
+
+                if ray and t > 0.75 then
+                    optimalPosition = ray.Position + Vector3.new(0, 2, 0)
+                    break
+                end
+
+                if not antiCrashRay then
+                    optimalPosition = currentPosition
+                    break
+                end
             end
+
+            local part = Instance.new("Part")
+            part.Anchored = true
+            part.Material = Enum.Material.ForceField
+            part.Size = Vector3.new(1.5, 1.5, 1.5)
+            part.Position = optimalPosition
+            part.CanCollide = false
+            part.Shape = Enum.PartType.Ball
+            part.Color = Color3.fromRGB(255, 255, 255)
+            part.Parent = workspace
+
+            repeat task.wait() until football.Parent ~= workspace
+
+            part:Destroy()
         end
-
-        local part = Instance.new("Part")
-        part.Anchored = true
-        part.Material = Enum.Material.ForceField
-        part.Size = Vector3.new(1.5, 1.5, 1.5)
-        part.Position = optimalPosition
-        part.CanCollide = false
-        part.Shape = Enum.PartType.Ball
-        part.Color = Color3.fromRGB(0, 0, 255)
-        part.Parent = workspace
-
-        repeat task.wait() until ball.Parent ~= workspace
-        part:Destroy()
     end)
 end)
 
-    
 
 t2:NewToggle("Block Extender", false, function(state)
     getgenv().bextend = (state and true or false)
-
-    local function getBlockPart()
-        return Character:FindFirstChild("BlockPart")
-    end
-
-    local Torso = Character and Character:FindFirstChild("Torso")
-
-    local function updateBlockPart()
-        local blockPart = getBlockPart()
-        if state then
-            blockPart.Size = Vector3.new(bextend, bextend, bextend)
-            blockPart.Transparency = bltransparency
-        else
-            blockPart.Size = Vector3.new(0.75, 5, 1.5)
-            blockPart.Transparency = 1
-        end
-    end
-
-    task.spawn(function()
-        while task.wait() do
-            updateBlockPart()
-        end
-    end)
-end)
+local blockPart = character and character:FindFirstChild("BlockPart")
+		
+if not blockPart then continue end
+			
+blockPart.Size = bextend and Vector3.new(bextend, bextend, bextend) or Vector3.new(0.75, 5, 1.5)
+blockPart.Transparency = blockExtender.Value and bltransparency or 1
+		end
+	end)	
+end
 
 t2:NewSlider("Block Extender Distance", 0, 20, 5, function(v)
     bextend = v
