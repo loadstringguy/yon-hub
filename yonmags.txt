@@ -1050,7 +1050,7 @@ end)
 t2:NewToggle("Ball Path Prediction", false, function(state)
     getgenv().beamPrediction = (state and true or false)
 
-    task.spawn(function()
+    task.spawn(function(state)
         while getgenv().beamPrediction do
             local football = workspace:FindFirstChild("Football")
             if not football then
