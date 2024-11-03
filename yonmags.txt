@@ -876,6 +876,39 @@ local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 local camera = workspace.CurrentCamera
 local values = replicatedStorage:FindFirstChild("Values")
 
+function beamProjectile(g, v0, x0, t1)
+	local c = 0.5*0.5*0.5;
+	local p3 = 0.5*g*t1*t1 + v0*t1 + x0;
+	local p2 = p3 - (g*t1*t1 + v0*t1)/3;
+	local p1 = (c*g*t1*t1 + 0.5*v0*t1 + x0 - c*(x0+p3))/(3*c) - p2;
+
+	local curve0 = (p1 - x0).magnitude;
+	local curve1 = (p2 - p3).magnitude;
+
+	local b = (x0 - p3).unit;
+	local r1 = (p1 - x0).unit;
+	local u1 = r1:Cross(b).unit;
+	local r2 = (p2 - p3).unit;
+	local u2 = r2:Cross(b).unit;
+	b = u1:Cross(r1).unit;
+
+	local cf1 = CFrame.new(
+		x0.x, x0.y, x0.z,
+		r1.x, u1.x, b.x,
+		r1.y, u1.y, b.y,
+		r1.z, u1.z, b.z
+	)
+
+	local cf2 = CFrame.new(
+		p3.x, p3.y, p3.z,
+		r2.x, u2.x, b.x,
+		r2.y, u2.y, b.y,
+		r2.z, u2.z, b.z
+	)
+
+	return curve0, -curve1, cf1, cf2;
+end
+
 local lib = Library:NewWindow("sigmhack", "Search")
 local t1 = lib:NewTab("Catching", "Canvas")
 
@@ -1048,17 +1081,10 @@ t2:NewSlider("Teleport Distance", 0, 5, 2, function(v)
 end)
 
 t2:NewToggle("Ball Path Prediction", false, function(state)
-    getgenv().beamPrediction = (state and true or false)
-
+    getgenv().ballPrediction = (state and true or false)
+local ball = findClosestBall() if not ball then continue end
     task.spawn(function(state)
-        while getgenv().beamPrediction do
-            local football = workspace:FindFirstChild("Football")
-            if not football then
-                warn("Football not found in the workspace")
-                return
-            end
-
-            local initialVelocity = football.AssemblyLinearVelocity
+            local initialVelocity = ball.AssemblyLinearVelocity
             local a0, a1 = Instance.new("Attachment"), Instance.new("Attachment")
             a0.Parent = workspace.Terrain
             a1.Parent = workspace.Terrain
@@ -1121,11 +1147,6 @@ t2:NewToggle("Optimal Jump", false, function(state)
     getgenv().optimalJumpPredictions = (state and true or false)
 
     task.spawn(function()
-        local ball = findClosestBall()
-        if not ball then
-            task.wait()
-            return
-        end
         
         if not getgenv().optimalJumpPredictions then return end
 
