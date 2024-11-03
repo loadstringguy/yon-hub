@@ -866,6 +866,9 @@ local userInputService = game:GetService("UserInputService")
 local replicatedStorage = game:GetService("ReplicatedStorage")
 local httpService = game:GetService("HttpService")
 local starterGui = game:GetService("StarterGui")
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:FindFirstChildOfClass("Humanoid")
+
 
 
 local Player = players.LocalPlayer
@@ -967,8 +970,85 @@ t2:NewToggle("Quick TP", false, function(state)
             handleQuickTP()
         end
     end
+	userInputService.InputBegan:Connect(onInputBegan)
+end)
 
-    userInputService.InputBegan:Connect(onInputBegan)
+t2:NewToggle("Mobile Quick TP Button", false, function(state)
+     getgenv().mobquickbutton = (state and true or false)
+		   local ScreenGui = Instance.new("ScreenGui")
+		   local TextButton = Instance.new("TextButton")
+		   local UICorner = Instance.new("UICorner")
+
+		   ScreenGui.Parent = player:WaitForChild("PlayerGui")
+		   ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+		   TextButton.Parent = ScreenGui
+		   TextButton.BackgroundColor3 = Color3.new(0.0588,0.0588,0.0588)
+		   TextButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		   TextButton.BorderSizePixel = 0
+		   TextButton.Position = UDim2.new(0.47683534, 0, 0.461152881, 0)
+		   TextButton.Size = UDim2.new(0, 65, 0, 62)
+		   TextButton.Font = Enum.Font.SourceSans
+		   TextButton.Text = "TP"
+		   TextButton.TextColor3 = Color3.new(0.8314,0.8314,0.8314)
+		   TextButton.TextSize = 17.000
+
+		   UICorner.Parent = TextButton
+
+		 
+		   local function dragify(button)
+			   local dragging, dragInput, dragStart, startPos
+
+			   local function update(input)
+				   local delta = input.Position - dragStart
+				   button.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+			   end
+
+			   button.InputBegan:Connect(function(input)
+				   if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+					   dragging = true
+					   dragStart = input.Position
+					   startPos = button.Position
+
+					   input.Changed:Connect(function()
+						   if input.UserInputState == Enum.UserInputState.End then
+							   dragging = false
+						   end
+					   end)
+				   end
+			   end)
+
+			   button.InputChanged:Connect(function(input)
+				   if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+					   dragInput = input
+				   end
+			   end)
+
+			   userInputService.InputChanged:Connect(function(input)
+				   if dragging and input == dragInput then
+					   update(input)
+				   end
+			   end)
+		   end
+
+		   dragify(TextButton)
+
+
+			TextButton.MouseButton1Click:Connect(teleportForward)
+		else
+
+			local existingGui = player.PlayerGui:FindFirstChild("ScreenGui")
+			if existingGui then
+				existingGui:Destroy()
+			end
+		end
+	end
+	end,
+})
+end)()
+
+t1:NewSlider("Teleport Distance", 0, 5, 2, function(v)
+    tpDistance = v
 end)
 
 t2:NewToggle("Ball Path Prediction", false, function(state)
@@ -1128,11 +1208,6 @@ end)
 t2:NewToggle("Optimal Jump", false, function(state)
     getgenv().optimalJumpPredictions = (state and true or false)
 
-    if not optimalJump or not optimalJump.Value then
-        warn("Optimal Jump Predictions not available")
-        return
-    end
-
     task.spawn(function()
         local initialVelocity = ball.AssemblyLinearVelocity
         local optimalPosition = Vector3.zero
@@ -1175,3 +1250,44 @@ t2:NewToggle("Optimal Jump", false, function(state)
         part:Destroy()
     end)
 end)
+
+t2:NewToggle("Block Extender", false, function(state)
+getgenv().bextend = (state and true or false)
+local function getBlockPart()
+    return Character:FindFirstChild("BlockPart")
+end
+
+local Torso = Character and Character:FindFirstChild("Torso")
+
+local function updateBlockPart()
+    local blockPart = getBlockPart()
+    if blockPart then
+        if blockreachon then
+            blockPart.Size = Vector3.new(bextend, bextend, bextend)
+            blockPart.Transparency = bltransparency
+        else
+            blockPart.Size = Vector3.new(0.75, 5, 1.5)
+			blockPart.Transparency = 1
+        end
+    end
+end
+
+
+task.spawn(function()
+    while task.wait() do
+        updateBlockPart()
+    end
+end)
+
+
+
+task.spawn(function()
+    while task.wait() do
+        updateBlockPart()
+    end
+end)
+
+t2:NewSlider("Block Extender Distance", 0, 20, 5, function(v)
+    bextend = v
+end)
+
