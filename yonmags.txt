@@ -1087,7 +1087,7 @@ t2:NewToggle("Ball Path Prediction", false, function(state)
     getgenv().ballPrediction = (state and true or false)
 
 
-            local initialVelocity = football.AssemblyLinearVelocity
+            local initialVelocity = ball.AssemblyLinearVelocity
             local a0, a1 = Instance.new("Attachment"), Instance.new("Attachment")
             a0.Parent = workspace.Terrain
             a1.Parent = workspace.Terrain
@@ -1121,7 +1121,7 @@ end)
 
 		
 t2:NewToggle("No Jump Cooldown", false, function(state)
-    getgenv().nojpcd = (state and true or false)
+    getgenv().nojumpcd = (state and true or false)
 
     if not humanoid then
         player.CharacterAdded:Wait()
